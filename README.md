@@ -1,1 +1,2 @@
-# CE301
+# Stock Guard 
+invertory management system
