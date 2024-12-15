@@ -1,9 +1,10 @@
 # app.py
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, redirect, url_for
 from datetime import datetime
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'  # Needed for flash messages
+app.secret_key = 'your_secret_key'# Needed for flash messages
+
 
 # Sample static data
 products = [
@@ -42,6 +43,7 @@ def dashboard():
 @app.route('/products')
 def view_products():
     return render_template('products.html', products=products)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
