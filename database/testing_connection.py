@@ -2,7 +2,7 @@
 from database import database
 import sys
 
-
+# to testing the connection is working from mysql workbench 
 def test_database_connection():
     print("\nTesting Database Connection...")
     print("=" * 50)

@@ -19,3 +19,6 @@ def get_connection():
     except Error as e:
         print(f"Error connecting to MySQL: {e}")
         raise e
+
+
+# testing connection from mysql 
