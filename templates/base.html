@@ -29,7 +29,32 @@
                     <i class="bi bi-speedometer2"></i> Dashboard
                 </a>
 
-            
+                <!-- Suppliers -->
+                <a href="{{ url_for('suppliers') }}" 
+                   class="list-group-item list-group-item-action {% if request.endpoint == 'suppliers' %}active{% endif %}">
+                    <i class="bi bi-truck"></i> Suppliers
+                </a>
+
+                <!-- Categories -->
+                <a href="{{ url_for('categories') }}" 
+                   class="list-group-item list-group-item-action {% if request.endpoint == 'categories' %}active{% endif %}">
+                    <i class="bi bi-list"></i> Categories
+                </a>
+
+                <!-- Products -->
+                <a href="{{ url_for('products') }}" 
+                   class="list-group-item list-group-item-action {% if request.endpoint == 'products' %}active{% endif %}">
+                    <i class="bi bi-box"></i> Products
+                </a>
+
+                <!-- Stores -->
+                <a href="{{ url_for('stores') }}" 
+                   class="list-group-item list-group-item-action {% if request.endpoint == 'stores' %}active{% endif %}">
+                    <i class="bi bi-shop"></i> Stores
+                </a>
+            </div>
+        </div>
+
         <!-- Page Content -->
         <div id="page-content-wrapper">
             <!-- Add this navbar -->
