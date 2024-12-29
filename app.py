@@ -1,6 +1,9 @@
 from flask import Flask, render_template, redirect, url_for
 from routes.dashboard import init_dashboard_routes
 from routes.categories import init_category_routes
+from routes.products import init_product_routes
+from routes.suppliers import init_supplier_routes
+from routes.stores import init_store_routes
 from database import database
 
 app = Flask(__name__, static_folder='static')
@@ -20,7 +23,9 @@ else:
     # Only initialize routes if database connection is successful
     init_dashboard_routes(app)
     init_category_routes(app)
-    
+    init_product_routes(app)
+    init_supplier_routes(app)
+    init_store_routes(app)
 
     @app.route('/')
     def index():
