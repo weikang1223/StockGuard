@@ -21,11 +21,11 @@ except Exception as e:
         return render_template('error.html')
 else:
     # Only initialize routes if database connection is successful
-    init_dashboard_routes(app)
-    init_category_routes(app)
-    init_product_routes(app)
-    init_supplier_routes(app)
-    init_store_routes(app)
+    init_dashboard_routes(app)   # dashboard routes
+    init_category_routes(app)     # category routes
+    init_product_routes(app)      # product routes
+    init_supplier_routes(app)      # supplier routes
+    init_store_routes(app)        # store routes
 
     @app.route('/')
     def index():
