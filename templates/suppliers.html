@@ -7,12 +7,13 @@
     <div class="card shadow mb-4">
         <div class="card-body">
             <div class="d-flex justify-content-between mb-3">
+                <input type="text" id="searchInput" class="form-control w-25" placeholder="Search Supplier...">
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
                     <i class="bi bi-plus-lg"></i> Add Supplier
                 </button>
             </div>
             <div class="table-responsive">
-                <table class="table table-bordered">
+                <table class="table table-bordered" id="suppliersTable">
                     <thead>
                         <tr>
                             <th>ID</th>

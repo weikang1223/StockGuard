@@ -119,4 +119,26 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     });
+    document.getElementById('searchInput').addEventListener('keyup', function() {
+        const searchValue = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#suppliersTable tbody tr');
+        
+        rows.forEach(row => {
+            const supplierName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+            if (supplierName.includes(searchValue)) {
+                row.style.display = '';
+                row.style.backgroundColor = "grey";
+            } else {
+                row.style.display = 'none';
+                row.style.backgroundColor = '';
+            }
+        });
+
+        if(searchValue ==="")
+        {
+            rows.forEach(row=>{
+                row.style.backgroundColor = '';
+            })
+        }
+    });
 }); 
