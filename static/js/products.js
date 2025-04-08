@@ -117,4 +117,18 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     });
+     // search input function
+    document.getElementById('searchInput').addEventListener('keyup', function() {
+        const searchValue = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#productsTable tbody tr');
+        
+        rows.forEach(row => {
+            const supplierName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+            if (supplierName.includes(searchValue)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
 }); 
