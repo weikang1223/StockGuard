@@ -199,17 +199,40 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-    document.getElementById('searchInput').addEventListener('keyup', function() {
-        const searchValue = this.value.toLowerCase();
+
+    // Search and filter functionality
+    const searchInput = document.getElementById('searchInput');
+    const locationFilter = document.getElementById('locationFilter');
+    
+    // Add event listeners for search and filter
+    if (searchInput) {
+        searchInput.addEventListener('keyup', filterStores);
+    }
+    
+    if (locationFilter) {
+        locationFilter.addEventListener('change', filterStores);
+    }
+
+    // Combined search and filter function
+    function filterStores() {
+        const searchValue = searchInput.value.toLowerCase();
+        const locationValue = locationFilter.value;
+        
         const rows = document.querySelectorAll('#storesTable tbody tr');
         
         rows.forEach(row => {
-            const supplierName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
-            if (supplierName.includes(searchValue)) {
+            const storeName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+            // Get location from the third cell (index 2) which contains the location
+            const location = row.querySelector('td:nth-child(3)').textContent;
+            
+            const matchesSearch = storeName.includes(searchValue);
+            const matchesLocation = !locationValue || location === locationValue;
+            
+            if (matchesSearch && matchesLocation) {
                 row.style.display = '';
             } else {
                 row.style.display = 'none';
             }
         });
-    });
+    }
 }); 

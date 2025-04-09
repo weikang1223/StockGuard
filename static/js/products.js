@@ -7,6 +7,16 @@ document.addEventListener('DOMContentLoaded', function() {
         e.preventDefault();
         const formData = new FormData(addForm);
         
+        // Debug: Log form data
+        console.log('Form data:', {
+            product_name: formData.get('product_name'),
+            category_id: formData.get('category_id'),
+            supplier_id: formData.get('supplier_id'),
+            store_id: formData.get('store_id'),
+            quantity: formData.get('quantity'),
+            price: formData.get('price')
+        });
+        
         try {
             const response = await fetch('/products', {
                 method: 'POST',
@@ -16,12 +26,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 body: JSON.stringify({
                     product_name: formData.get('product_name'),
                     category_id: formData.get('category_id'),
+                    supplier_id: formData.get('supplier_id'),
+                    store_id: formData.get('store_id'),
                     quantity: formData.get('quantity'),
                     price: formData.get('price')
                 })
             });
             
+            // Debug: Log response
+            console.log('Response status:', response.status);
             const result = await response.json();
+            console.log('Response data:', result);
             
             if (response.ok) {
                 alert('Product added successfully!');
@@ -45,6 +60,8 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('editId').value = button.dataset.id;
             document.getElementById('editName').value = button.dataset.name;
             document.getElementById('editCategory').value = button.dataset.category;
+            document.getElementById('editSupplier').value = button.dataset.supplier;
+            document.getElementById('editStore').value = button.dataset.store || '';
             document.getElementById('editQuantity').value = button.dataset.quantity;
             document.getElementById('editPrice').value = button.dataset.price;
             editModal.show();
@@ -65,6 +82,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 body: JSON.stringify({
                     product_name: formData.get('product_name'),
                     category_id: formData.get('category_id'),
+                    supplier_id: formData.get('supplier_id'),
+                    store_id: formData.get('store_id'),
                     quantity: formData.get('quantity'),
                     price: formData.get('price')
                 })
@@ -117,18 +136,35 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     });
-     // search input function
+
+    // Search functionality
     document.getElementById('searchInput').addEventListener('keyup', function() {
-        const searchValue = this.value.toLowerCase();
+        filterProducts();
+    });
+
+    // Store filter functionality
+    document.getElementById('storeFilter').addEventListener('change', function() {
+        filterProducts();
+    });
+
+    // Combined search and filter function
+    function filterProducts() {
+        const searchValue = document.getElementById('searchInput').value.toLowerCase();
+        const storeValue = document.getElementById('storeFilter').value;
         const rows = document.querySelectorAll('#productsTable tbody tr');
         
         rows.forEach(row => {
-            const supplierName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
-            if (supplierName.includes(searchValue)) {
+            const productName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+            const storeId = row.dataset.storeId;
+            
+            const matchesSearch = productName.includes(searchValue);
+            const matchesStore = !storeValue || storeId === storeValue;
+            
+            if (matchesSearch && matchesStore) {
                 row.style.display = '';
             } else {
                 row.style.display = 'none';
             }
         });
-    });
+    }
 }); 
