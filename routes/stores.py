@@ -7,18 +7,26 @@ def init_store_routes(app):
         try:
             conn = database.get_connection()
             cursor = conn.cursor(dictionary=True)
+            
+            # Retrieve all stores along with their product counts
             cursor.execute('''
-                SELECT s.store_id, s.store_name, s.location, COUNT(p.product_id) as product_count 
+                SELECT s.store_id, s.store_name, s.location, COUNT(p.product_id) AS product_count 
                 FROM stores s 
                 LEFT JOIN store_products p ON s.store_id = p.store_id 
                 GROUP BY s.store_id, s.store_name, s.location
             ''')
             stores = cursor.fetchall()
-            return render_template('stores.html', stores=stores)
+            
+            # Fetch unique locations for the filter dropdown
+            cursor.execute('SELECT DISTINCT location FROM stores ORDER BY location')
+            locations = [row['location'] for row in cursor.fetchall()]
+            
+            return render_template('stores.html', stores=stores, locations=locations)
         finally:
             cursor.close()
             conn.close()
-
+    
+    # add function
     @app.route('/stores', methods=['POST'])
     def add_store():
         try:
@@ -120,3 +128,51 @@ def init_store_routes(app):
             cursor.close()
             conn.close() 
 
+
+    # edit function
+    @app.route('/stores/<int:id>', methods=['PUT'])
+    def update_store(id):
+        try:
+            data = request.get_json()
+            conn = database.get_connection()
+            cursor = conn.cursor(dictionary=True)
+
+            cursor.execute('''
+                UPDATE stores
+                SET store_name = %s,
+                    location = %s
+                WHERE store_id = %s
+        ''', ( data['store_name'],  data['location'],
+            id
+        ))
+
+            if cursor.rowcount == 0:
+                return jsonify({'success': False, 'message': 'Store not found'}), 404
+
+            conn.commit()
+            return jsonify({'success': True})
+        except Exception as e:
+            return jsonify({'success': False, 'message': str(e)}), 500
+        finally:
+            cursor.close()
+            conn.close()
+
+    # delete function
+    @app.route('/stores/<int:id>', methods=['DELETE'])
+    def delete_store(id):
+        try:
+            conn = database.get_connection()
+            cursor = conn.cursor(dictionary=True)
+    
+            cursor.execute('DELETE FROM stores WHERE store_id = %s', (id,)) 
+            if cursor.rowcount == 0:
+                 return jsonify({'success': False, 'message': 'Store not found'}), 404
+            
+            conn.commit()
+            return jsonify({'success': True})
+        except Exception as e:
+            print(f"Error deleting store: {str(e)}")
+            return jsonify({'success': False, 'message': str(e)}), 500
+        finally:
+            cursor.close()
+            conn.close()

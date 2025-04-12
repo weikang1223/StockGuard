@@ -158,6 +158,85 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Error transferring products');
         }
     });
+    // Edit funcationlity 
+    const editButtons = document.querySelectorAll('.edit-btn');
+    const editStoreModal = new bootstrap.Modal(document.getElementById('editStoreModal'));
+    const editStoreForm = document.getElementById('editStoreForm');
+
+    editButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            document.getElementById('editStoreId').value = button.dataset.id;
+            document.getElementById('editStoreName').value = button.dataset.name;
+            document.getElementById('editStoreLocation').value = button.dataset.location;
+            
+            editStoreModal.show();
+        });
+    });
+
+    editStoreForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(editStoreForm);
+        const id = formData.get('store_id');
+        
+        try {
+            const response = await fetch(`/stores/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    store_name: formData.get('store_name'),
+                    location: formData.get('location'),         
+                })
+            });
+            
+            const result = await response.json();
+            
+            if (response.ok) {
+                alert('Store updated successfully!'); 
+                window.location.reload();
+            } else {
+                alert('Error: ' + (result.message || 'Failed to update store')); // Updated alert message
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error updating store'); 
+        }
+    });    
+
+    // Delete functionality
+    const deleteButtons = document.querySelectorAll('.delete-btn');
+    const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    let storeToDelete = null;
+
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            storeToDelete = button.dataset.id;
+            deleteModal.show();
+        });
+    });
+
+    document.getElementById('confirmDelete').addEventListener('click', async () => {
+        if (storeToDelete) {
+            try {
+                const response = await fetch(`/stores/${storeToDelete}`, {
+                    method: 'DELETE'
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    alert('Store deleted successfully!');
+                    window.location.reload();
+                } else {
+                    alert('Error: ' + (result.message || 'Failed to delete store'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error deleting store');
+            }
+        }
+    });
 
     // View Inventory functionality
     const viewInventoryButtons = document.querySelectorAll('.view-inventory-btn');
