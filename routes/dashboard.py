@@ -40,7 +40,7 @@ def init_dashboard_routes(app):
                     p.product_name,
                     p.quantity,
                     s.company_name as supplier_name,
-                    s.contact_person,
+                    s.contact_name as supplier_contact_person,
                     s.phone as supplier_phone,
                     s.email as supplier_email
                 FROM products p

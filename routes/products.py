@@ -105,12 +105,10 @@ def init_product_routes(app):
             if data.get('store_id'):
                 # For stock in, we'll use store_id 0 as the source (external source)
                 cursor.execute('''
-                    INSERT INTO store_transactions 
-                    (from_store_id, to_store_id, product_id, quantity, transaction_date, created_by) 
-                    VALUES (%s, %s, %s, %s, %s, %s)
+                    INSERT INTO product_transactions 
+                    (product_id, quantity, transaction_date, created_by) 
+                    VALUES (%s, %s, %s, %s)
                 ''', (
-                    0,  # from_store_id is 0 for external stock in
-                    data['store_id'],  # to_store_id is the store receiving the stock
                     product_id,
                     data['quantity'],
                     data.get('date', datetime.now().strftime('%Y-%m-%d')),  # Use provided date or current date
@@ -196,95 +194,73 @@ def init_product_routes(app):
             
     @app.route('/products/stock-out', methods=['POST'])
     def stock_out():
-        try:
-            data = request.get_json()
-            product_id = data.get('product_id')
-            store_id = data.get('store_id')
-            quantity = data.get('quantity')
-            date = data.get('date')
-            
-            if not all([product_id, store_id, quantity, date]):
-                return jsonify({'success': False, 'message': 'Missing required fields'}), 400
-                
-            conn = database.get_connection()
-            cursor = conn.cursor(dictionary=True)
-            
-            # Start transaction
-            cursor.execute('START TRANSACTION')
-            
-            # Check if product exists and has enough quantity
-            cursor.execute('''
-                SELECT quantity FROM products 
-                WHERE product_id = %s AND store_id = %s
-            ''', (product_id, store_id))
-            
-            product = cursor.fetchone()
-            
-            if not product:
-                cursor.execute('ROLLBACK')
-                return jsonify({'success': False, 'message': 'Product not found in the specified store'}), 404
-                
-            if product['quantity'] < int(quantity):
-                cursor.execute('ROLLBACK')
-                return jsonify({'success': False, 'message': 'Insufficient quantity in stock'}), 400
-            
-            # Update product quantity
-            new_quantity = product['quantity'] - int(quantity)
-            cursor.execute('''
-                UPDATE products 
-                SET quantity = %s
-                WHERE product_id = %s AND store_id = %s
-            ''', (new_quantity, product_id, store_id))
-            
-            # Record stock out transaction
-            cursor.execute('''
-                INSERT INTO store_transactions 
-                (from_store_id, product_id, quantity, transaction_date, created_by) 
-                VALUES (%s, %s, %s, %s, %s)
-            ''', (store_id, product_id, quantity, date, 1))  # Using user ID 1 as default
-            
-            conn.commit()
-            return jsonify({'success': True, 'message': 'Stock out recorded successfully'})
-        except Exception as e:
-            if 'conn' in locals():
-                cursor.execute('ROLLBACK')
-            print(f"Error recording stock out: {str(e)}")
-            return jsonify({'success': False, 'message': str(e)}), 500
-        finally:
-            cursor.close()
-            conn.close()
+       try:
+           data = request.get_json()
+           product_id = data.get('product_id')
+           quantity = data.get('quantity')
+           date = data.get('date')
+           
+           if not all([product_id, quantity, date]):
+               return jsonify({'success': False, 'message': 'Missing required fields'}), 400
+               
+           conn = database.get_connection()
+           cursor = conn.cursor(dictionary=True)
+           
+           cursor.execute('START TRANSACTION')
+           
+           cursor.execute('SELECT quantity FROM products WHERE product_id = %s', (product_id,))
+           product = cursor.fetchone()
+           
+           if not product:
+               cursor.execute('ROLLBACK')
+               return jsonify({'success': False, 'message': 'Product not found'}), 404
+               
+           if product['quantity'] < int(quantity):
+               cursor.execute('ROLLBACK')
+               return jsonify({'success': False, 'message': 'Insufficient quantity in stock'}), 400
+           
+           new_quantity = product['quantity'] - int(quantity)
+           cursor.execute('UPDATE products SET quantity = %s WHERE product_id = %s', (new_quantity, product_id))
+           
+           cursor.execute('INSERT INTO product_transactions (product_id, quantity, transaction_date, created_by) VALUES (%s, %s, %s, %s)', (product_id, quantity, date, 1))
+           
+           conn.commit()
+           return jsonify({'success': True, 'message': 'Stock out recorded successfully'})
+       except Exception as e:
+           if 'conn' in locals():
+               cursor.execute('ROLLBACK')
+           print(f"Error recording stock out: {str(e)}")
+           return jsonify({'success': False, 'message': str(e)}), 500
+       finally:
+           cursor.close()
+           conn.close()
+
             
     @app.route('/products/transactions')
     def get_transactions():
-        try:
-            conn = database.get_connection()
-            cursor = conn.cursor(dictionary=True)
-            
-            cursor.execute('''
-                SELECT 
-                    st.transaction_id,
-                    st.product_id,
-                    p.product_name,
-                    st.from_store_id,
-                    s1.store_name as from_store_name,
-                    st.to_store_id,
-                    s2.store_name as to_store_name,
-                    st.quantity,
-                    st.transaction_date,
-                    u.username as created_by
-                FROM store_transactions st
-                JOIN products p ON st.product_id = p.product_id
-                JOIN stores s1 ON st.from_store_id = s1.store_id
-                LEFT JOIN stores s2 ON st.to_store_id = s2.store_id
-                JOIN users u ON st.created_by = u.id
-                ORDER BY st.transaction_date DESC
-            ''')
-            
-            transactions = cursor.fetchall()
-            return render_template('transactions.html', transactions=transactions)
-        except Exception as e:
-            print(f"Error fetching transactions: {str(e)}")
-            return jsonify({'error': str(e)}), 500
-        finally:
-            cursor.close()
-            conn.close() 
+      try:
+          conn = database.get_connection()
+          cursor = conn.cursor(dictionary=True)
+          
+          cursor.execute('''
+              SELECT 
+                  pt.transaction_id,
+                  pt.product_id,
+                  p.product_name,
+                  pt.quantity,
+                  pt.transaction_date,
+                  u.username AS created_by
+              FROM product_transactions pt
+              JOIN products p ON pt.product_id = p.product_id
+              JOIN users u ON pt.created_by = u.id
+              ORDER BY pt.transaction_date DESC
+          ''')
+          
+          transactions = cursor.fetchall()
+          return render_template('transactions.html', transactions=transactions)
+      except Exception as e:
+          print(f"Error fetching transactions: {e}")
+          return jsonify({'error': str(e)}), 500
+      finally:
+          cursor.close()
+          conn.close()
