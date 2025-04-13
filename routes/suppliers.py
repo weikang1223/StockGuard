@@ -7,7 +7,7 @@ def init_supplier_routes(app):
         try:
             conn = database.get_connection()
             cursor = conn.cursor(dictionary=True)
-            cursor.execute('SELECT id, company_name, supplier_contact_person, phone, email, address FROM suppliers')
+            cursor.execute('SELECT id, company_name, contact_name, phone, email, address FROM suppliers')
             suppliers = cursor.fetchall()
             return render_template('suppliers.html', suppliers=suppliers)
         finally:
@@ -22,7 +22,7 @@ def init_supplier_routes(app):
             cursor = conn.cursor(dictionary=True)
             
             cursor.execute('''
-                INSERT INTO suppliers (company_name, supplier_contact_person, phone, email, address) 
+                INSERT INTO suppliers (company_name, contact_name, phone, email, address) 
                 VALUES (%s, %s, %s, %s, %s)
             ''', (
                 data['company_name'],
@@ -51,7 +51,7 @@ def init_supplier_routes(app):
             cursor.execute('''
                 UPDATE suppliers 
                 SET company_name = %s,
-                    supplier_contact_person = %s,
+                    contact_name = %s,
                     phone = %s,
                     email = %s,
                     address = %s

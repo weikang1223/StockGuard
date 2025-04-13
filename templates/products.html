@@ -4,23 +4,31 @@
 {% block content %}
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 text-gray-800">Products</h1>    
+        <h1 class="h3 text-gray-800">Products</h1>
     </div>
     <div class="card shadow mb-4">
         <div class="card-body">
             <div class="d-flex justify-content-between mb-3">
                 <div class="d-flex gap-2">
-                    <input type="text" id="searchInput" class="form-control flex-grow-1" placeholder="Search Products...">
-                    <select id="storeFilter" class="form-select flex-grow-1">
+                    <input type="text" id="searchInput" class="form-control w-40" placeholder="Search Products...">
+                    <select id="storeFilter" class="form-select w-40">
                         <option value="">All Stores</option>
                         {% for store in stores %}
                         <option value="{{ store.store_id }}">{{ store.store_name }}</option>
                         {% endfor %}
                     </select>
                 </div>
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">
-                    <i class="bi bi-plus-lg"></i> Add Product
-                </button>
+                <div>
+                    <a href="{{ url_for('get_transactions') }}" class="btn btn-info me-2">
+                        <i class="bi bi-clock-history"></i> View Transactions
+                    </a>
+                    <button class="btn btn-warning me-2" data-bs-toggle="modal" data-bs-target="#stockOutModal">
+                        <i class="bi bi-box-arrow-right"></i> Out Product
+                    </button>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">
+                        <i class="bi bi-plus-lg"></i> Add Product
+                    </button>
+                </div>
             </div>
             <div class="table-responsive">
                 <table class="table table-bordered" id="productsTable">
@@ -203,6 +211,49 @@
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 <button type="button" class="btn btn-danger" id="confirmDelete">Delete</button>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stock Out Modal -->
+<div class="modal fade" id="stockOutModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Stock Out Product</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="stockOutForm">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="stockOutStore" class="form-label">Store</label>
+                        <select class="form-select" id="stockOutStore" name="store_id" required>
+                            <option value="">Select Store</option>
+                            {% for store in stores %}
+                            <option value="{{ store.store_id }}">{{ store.store_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="stockOutProduct" class="form-label">Product</label>
+                        <select class="form-select" id="stockOutProduct" name="product_id" required disabled>
+                            <option value="">Select Product</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="stockOutQuantity" class="form-label">Quantity</label>
+                        <input type="number" class="form-control" id="stockOutQuantity" name="quantity" min="1" required disabled>
+                    </div>
+                    <div class="mb-3">
+                        <label for="stockOutDate" class="form-label">Date</label>
+                        <input type="date" class="form-control" id="stockOutDate" name="date" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-warning">Stock Out</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

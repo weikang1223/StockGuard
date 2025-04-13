@@ -1,144 +1,133 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Add Supplier functionality
-    const addSupplierForm = document.getElementById('addSupplierForm');
-    const addSupplierModal = new bootstrap.Modal(document.getElementById('addSupplierModal'));
+    // Add Supplier
+    document.getElementById('addSupplierForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = {
+            company_name: document.getElementById('companyName').value,
+            contact_person: document.getElementById('contactPerson').value,
+            phone: document.getElementById('phone').value,
+            email: document.getElementById('email').value,
+            address: document.getElementById('address').value
+        };
 
-    addSupplierForm.addEventListener('submit', async (e) => {
-        e.preventDefault(); 
-        const formData = new FormData(addSupplierForm);
-        try {
-            const response = await fetch('/suppliers', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    company_name: formData.get('company_name'),
-                    contact_person: formData.get('contact_person'),
-                    phone: formData.get('phone'),
-                    email: formData.get('email'),
-                    address: formData.get('address')
-                })
-            });
-            
-            const result = await response.json();
-            
-            if (response.ok) {
-                alert('Supplier added successfully!');
-                window.location.reload();
+        fetch('/suppliers', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Supplier added successfully');
+                location.reload();
             } else {
-                alert('Error: ' + (result.message || 'Failed to add supplier'));
+                alert('Error adding supplier: ' + data.message);
             }
-        } catch (error) {
+        })
+        .catch(error => {
             console.error('Error:', error);
             alert('Error adding supplier');
-        }
-    });
-
-    // Edit Supplier functionality
-    const editButtons = document.querySelectorAll('.edit-btn');
-    const editSupplierModal = new bootstrap.Modal(document.getElementById('editSupplierModal'));
-    const editSupplierForm = document.getElementById('editSupplierForm');
-
-    editButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            document.getElementById('editSupplierId').value = button.dataset.id;
-            document.getElementById('editCompanyName').value = button.dataset.name;
-            document.getElementById('editContactPerson').value = button.dataset.contact;
-            document.getElementById('editPhone').value = button.dataset.phone;
-            document.getElementById('editEmail').value = button.dataset.email;
-            document.getElementById('editAddress').value = button.dataset.address;
-            editSupplierModal.show();
         });
     });
 
-    editSupplierForm.addEventListener('submit', async (e) => {
+    // Edit Supplier
+    document.querySelectorAll('.edit-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const supplierId = this.getAttribute('data-id');
+            const companyName = this.getAttribute('data-name');
+            const contactPerson = this.getAttribute('data-contact');
+            const phone = this.getAttribute('data-phone');
+            const email = this.getAttribute('data-email');
+            const address = this.getAttribute('data-address');
+            
+            document.getElementById('editSupplierId').value = supplierId;
+            document.getElementById('editCompanyName').value = companyName;
+            document.getElementById('editContactPerson').value = contactPerson;
+            document.getElementById('editPhone').value = phone;
+            document.getElementById('editEmail').value = email;
+            document.getElementById('editAddress').value = address;
+            
+            new bootstrap.Modal(document.getElementById('editSupplierModal')).show();
+        });
+    });
+
+    // Update Supplier
+    document.getElementById('editSupplierForm').addEventListener('submit', function(e) {
         e.preventDefault();
-        const formData = new FormData(editSupplierForm);
-        const id = formData.get('supplier_id');
         
-        try {
-            const response = await fetch(`/suppliers/${id}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    company_name: formData.get('company_name'),
-                    contact_person: formData.get('contact_person'),
-                    phone: formData.get('phone'),
-                    email: formData.get('email'),
-                    address: formData.get('address')
-                })
-            });
-            
-            const result = await response.json();
-            
-            if (response.ok) {
-                alert('Supplier updated successfully!');
-                window.location.reload();
+        const supplierId = document.getElementById('editSupplierId').value;
+        const formData = {
+            company_name: document.getElementById('editCompanyName').value,
+            contact_person: document.getElementById('editContactPerson').value,
+            phone: document.getElementById('editPhone').value,
+            email: document.getElementById('editEmail').value,
+            address: document.getElementById('editAddress').value
+        };
+
+        fetch(`/suppliers/${supplierId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Supplier updated successfully');
+                location.reload();
             } else {
-                alert('Error: ' + (result.message || 'Failed to update supplier'));
+                alert('Error updating supplier: ' + data.message);
             }
-        } catch (error) {
+        })
+        .catch(error => {
             console.error('Error:', error);
             alert('Error updating supplier');
-        }
-    });
-
-    // Delete Supplier functionality
-    const deleteButtons = document.querySelectorAll('.delete-btn');
-    const deleteSupplierModal = new bootstrap.Modal(document.getElementById('deleteSupplierModal'));
-    let supplierToDelete = null;
-
-    deleteButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            supplierToDelete = button.dataset.id;
-            deleteSupplierModal.show();
         });
     });
 
-    document.getElementById('confirmDeleteSupplier').addEventListener('click', async () => {
+    // Delete Supplier
+    let supplierToDelete = null;
+    
+    document.querySelectorAll('.delete-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            supplierToDelete = this.getAttribute('data-id');
+            new bootstrap.Modal(document.getElementById('deleteSupplierModal')).show();
+        });
+    });
+    
+    document.getElementById('confirmDeleteSupplier').addEventListener('click', function() {
         if (supplierToDelete) {
-            try {
-                const response = await fetch(`/suppliers/${supplierToDelete}`, {
-                    method: 'DELETE'
-                });
-                
-                const result = await response.json();
-                
-                if (response.ok) {
-                    alert('Supplier deleted successfully!');
-                    window.location.reload();
+            fetch(`/suppliers/${supplierToDelete}`, {
+                method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Supplier deleted successfully');
+                    location.reload();
                 } else {
-                    alert('Error: ' + (result.message || 'Failed to delete supplier'));
+                    alert('Error deleting supplier: ' + data.message);
                 }
-            } catch (error) {
+            })
+            .catch(error => {
                 console.error('Error:', error);
                 alert('Error deleting supplier');
-            }
+            });
         }
     });
-    document.getElementById('searchInput').addEventListener('keyup', function() {
-        const searchValue = this.value.toLowerCase();
+
+    // Search functionality
+    document.getElementById('searchInput').addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
         const rows = document.querySelectorAll('#suppliersTable tbody tr');
         
         rows.forEach(row => {
-            const supplierName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
-            if (supplierName.includes(searchValue)) {
-                row.style.display = '';
-                row.style.backgroundColor = "grey";
-            } else {
-                row.style.display = 'none';
-                row.style.backgroundColor = '';
-            }
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(searchTerm) ? '' : 'none';
         });
-
-        if(searchValue ==="")
-        {
-            rows.forEach(row=>{
-                row.style.backgroundColor = '';
-            })
-        }
     });
 }); 

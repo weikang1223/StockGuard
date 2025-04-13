@@ -52,23 +52,20 @@
                    class="list-group-item list-group-item-action {% if request.endpoint == 'stores' %}active{% endif %}">
                     <i class="bi bi-shop"></i> Stores
                 </a>
+                
+                <!-- Transactions -->
+                <a href="{{ url_for('get_transactions') }}" 
+                   class="list-group-item list-group-item-action {% if request.endpoint == 'get_transactions' %}active{% endif %}">
+                    <i class="bi bi-arrow-left-right"></i> Product Transactions
+                </a>
             </div>
         </div>
 
         <!-- Page Content -->
         <div id="page-content-wrapper">
-            <!-- Add this navbar -->
+            <!-- Navbar -->
             <nav class="navbar navbar-light bg-light">
                 <div class="container-fluid">
-                    <span></span> <!-- Empty span to push the icons to the right -->
-                    <div class="d-flex">
-                        <a href="#" class="nav-link text-dark me-3">
-                            <i class="bi bi-person-circle fs-5"></i>
-                        </a>
-                        <a href="#" class="nav-link text-dark">
-                            <i class="bi bi-box-arrow-right fs-5"></i>
-                        </a>
-                    </div>
                 </div>
             </nav>
 
