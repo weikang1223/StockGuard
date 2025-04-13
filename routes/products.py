@@ -17,8 +17,7 @@ def init_product_routes(app):
                 FROM products p
                 LEFT JOIN categories c ON p.category_id = c.id
                 LEFT JOIN suppliers s ON p.supplier_id = s.id
-                LEFT JOIN store_products sp ON p.product_id = sp.product_id
-                LEFT JOIN stores st ON sp.store_id = st.store_id
+                LEFT JOIN stores st ON p.store_id = st.store_id
             ''')
             all_products = cursor.fetchall()
 
@@ -80,12 +79,13 @@ def init_product_routes(app):
             cursor = conn.cursor(dictionary=True)
             
             cursor.execute('''
-                INSERT INTO products (product_name, category_id, supplier_id, quantity, price) 
-                VALUES (%s, %s, %s, %s, %s)
+                INSERT INTO products (product_name, category_id, supplier_id,store id, quantity, price) 
+                VALUES (%s, %s, %s, %s, %s,%s )
             ''', (
                 data['product_name'],
                 data['category_id'],
                 data['supplier_id'],
+                data['store_id'],
                 data['quantity'],
                 data['price']
             ))
@@ -116,6 +116,7 @@ def init_product_routes(app):
                 SET product_name = %s, 
                     category_id = %s,
                     supplier_id = %s, 
+                    store_id = %s,
                     quantity = %s, 
                     price = %s 
                 WHERE product_id = %s
@@ -123,6 +124,7 @@ def init_product_routes(app):
                 data['product_name'],
                 data['category_id'],
                 data['supplier_id'],
+                data['store_id'],
                 data['quantity'],
                 data['price'],
                 id
@@ -131,19 +133,6 @@ def init_product_routes(app):
             if cursor.rowcount == 0:
                 cursor.execute('ROLLBACK')
                 return jsonify({'success': False, 'message': 'Product not found'}), 404
-            
-            # Handle store assignment
-            store_id = data.get('store_id')
-            
-            # Remove existing store assignment if any
-            cursor.execute('DELETE FROM store_products WHERE product_id = %s', (id,))
-            
-            # Add new store assignment if store_id is provided
-            if store_id:
-                cursor.execute('''
-                    INSERT INTO store_products (product_id, store_id)
-                    VALUES (%s, %s)
-                ''', (id, store_id))
             
             conn.commit()
             return jsonify({'success': True})
