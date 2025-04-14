@@ -10,47 +10,64 @@
     </div>
     
     <div class="card shadow mb-4">
-        <div class="card-header py-3">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
             <h6 class="m-0 font-weight-bold text-primary">All Transactions</h6>
+            <select id="transactionFilter" class="form-select w-25">
+                <option value="">All Transactions</option>
+                <option value="in">In</option>
+                <option value="out">Out</option>
+            </select>
         </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-bordered" id="transactionsTable" width="100%" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Product</th>
-                            <th>Quantity</th>
-                            <th>Date</th>
-                            <th>Created By</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for transaction in transactions %}
-                        <tr>
-                            <td>{{ transaction.transaction_id }}</td>
-                            <td>{{ transaction.product_name }}</td>
-                            <td>{{ transaction.quantity }}</td>
-                            <td>{{ transaction.transaction_date.strftime('%Y-%m-%d %H:%M:%S') }}</td>
-                            <td>{{ transaction.created_by }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+    </div>
+    
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="transactionsTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Date</th>
+                        <th>Transaction Type</th>
+                        <th>Created By</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for transaction in transactions %}
+                    <tr class="transaction-row" data-transaction-type="{{ transaction.transaction_type }}">
+                        <td>{{ transaction.transaction_id }}</td>
+                        <td>{{ transaction.product_name }}</td>
+                        <td>{{ transaction.quantity }}</td>
+                        <td>{{ transaction.transaction_date.strftime('%Y-%m-%d') }}</td>
+                        <td>
+                            {% if transaction.transaction_type == 'in' %}
+                              <span class="badge bg-success fs-8"><i class="fas fa-plus-circle"></i> In</span>
+                            {% else %}
+                              <span class="badge bg-danger fs-8"><i class="fas fa-minus-circle"></i> Out</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ transaction.created_by }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
+<script src="{{ url_for('static', filename='js/transactions.js') }}"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Initialize DataTable
-        $('#transactionsTable').DataTable({
-            order: [[5, 'desc']], // Sort by date column by default
-            pageLength: 25
+    document.getElementById('transactionFilter').addEventListener('change', function() {
+        const filterValue = this.value.toLowerCase();
+        const rows = document.querySelectorAll('.transaction-row');
+
+        rows.forEach(row => {
+            const transactionType = row.getAttribute('data-transaction-type');
+            row.style.display = (!filterValue || transactionType.includes(filterValue)) ? '' : 'none';
         });
     });
 </script>
-{% endblock %} 
+{% endblock %}

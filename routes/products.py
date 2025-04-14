@@ -106,12 +106,13 @@ def init_product_routes(app):
                 # For stock in, we'll use store_id 0 as the source (external source)
                 cursor.execute('''
                     INSERT INTO product_transactions 
-                    (product_id, quantity, transaction_date, created_by) 
-                    VALUES (%s, %s, %s, %s)
+                    (product_id, quantity, transaction_date, transaction_type,created_by) 
+                    VALUES (%s, %s, %s, %s,%s)
                 ''', (
                     product_id,
                     data['quantity'],
-                    data.get('date', datetime.now().strftime('%Y-%m-%d')),  # Use provided date or current date
+                    data.get('date', datetime.now()), # Use provided date 
+                    'in', 
                     1  # Using user ID 1 as default
                 ))
             
@@ -222,7 +223,8 @@ def init_product_routes(app):
            new_quantity = product['quantity'] - int(quantity)
            cursor.execute('UPDATE products SET quantity = %s WHERE product_id = %s', (new_quantity, product_id))
            
-           cursor.execute('INSERT INTO product_transactions (product_id, quantity, transaction_date, created_by) VALUES (%s, %s, %s, %s)', (product_id, quantity, date, 1))
+           cursor.execute('INSERT INTO product_transactions (product_id, quantity, transaction_date, transaction_type,created_by) VALUES (%s, %s, %s, %s,%s)', 
+            (product_id, quantity, date,'Out',1))
            
            conn.commit()
            return jsonify({'success': True, 'message': 'Stock out recorded successfully'})
@@ -249,6 +251,7 @@ def init_product_routes(app):
                   p.product_name,
                   pt.quantity,
                   pt.transaction_date,
+                  pt.transaction_type,
                   u.username AS created_by
               FROM product_transactions pt
               JOIN products p ON pt.product_id = p.product_id
