@@ -4,6 +4,7 @@ from routes.categories import init_category_routes
 from routes.products import init_product_routes
 from routes.suppliers import init_supplier_routes
 from routes.stores import init_store_routes
+from routes.users import init_user_routes
 from database import database
 
 app = Flask(__name__, static_folder='static')
@@ -26,6 +27,7 @@ else:
     init_product_routes(app)      # product routes
     init_supplier_routes(app)      # supplier routes
     init_store_routes(app)        # store routes
+    init_user_routes(app)
 
     @app.route('/')
     def index():
