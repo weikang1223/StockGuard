@@ -22,9 +22,10 @@ def init_user_routes(app):
             cursor = conn.cursor(dictionary=True)
 
             cursor.execute('''
-                INSERT INTO users (username, password, role) 
-                VALUES (%s, %s, %s)
+                INSERT INTO users (id,username, password, role) 
+                VALUES (%s, %s, %s,%s)
             ''', (
+                data['id'],
                 data['username'],
                 data['password'],  # Consider hashing in production
                 data['role']

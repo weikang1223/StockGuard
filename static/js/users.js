@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
         e.preventDefault();
         
         const formData = {
+            id: document.getElementById('id').value,
             username: document.getElementById('username').value,
             password: document.getElementById('password').value,  // Consider hashing in production
             role: document.getElementById('role').value
