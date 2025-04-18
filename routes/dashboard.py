@@ -1,4 +1,4 @@
-from flask import render_template, jsonify
+from flask import render_template, request, jsonify
 from database import database
 
 def init_dashboard_routes(app):
@@ -7,23 +7,26 @@ def init_dashboard_routes(app):
         try:
             conn = database.get_connection()
             cursor = conn.cursor(dictionary=True)
-            
-            # Get total number of products
+
+            # Get all stores for filter dropdown
+            cursor.execute('SELECT store_id, store_name FROM stores')
+            stores = cursor.fetchall()
+
+            # Default stats (total from all stores)
             cursor.execute('SELECT COUNT(*) as total_products FROM products')
             total_products = cursor.fetchone()['total_products']
-            
-            # Get total value of all products
+
             cursor.execute('SELECT SUM(quantity * price) as total_value FROM products')
             total_value = cursor.fetchone()['total_value'] or 0
-            
-            # Get low stock items count
-            cursor.execute('SELECT COUNT(*) as low_stock FROM products WHERE quantity < 10')
+
+            cursor.execute('SELECT COUNT(*) as low_stock FROM products WHERE quantity <= 10')
             low_stock = cursor.fetchone()['low_stock']
-            
-            return render_template('dashboard.html', 
-                                total_products=total_products,
-                                total_value=total_value,
-                                low_stock=low_stock)
+
+            return render_template('dashboard.html',
+                                   stores=stores,
+                                   total_products=total_products,
+                                   total_value=total_value,
+                                   low_stock=low_stock)
         finally:
             cursor.close()
             conn.close()
@@ -33,7 +36,7 @@ def init_dashboard_routes(app):
         try:
             conn = database.get_connection()
             cursor = conn.cursor(dictionary=True)
-            
+
             cursor.execute('''
                 SELECT 
                     p.product_id,
@@ -45,12 +48,56 @@ def init_dashboard_routes(app):
                     s.email as supplier_email
                 FROM products p
                 LEFT JOIN suppliers s ON p.supplier_id = s.id
-                WHERE p.quantity < 10
+                WHERE p.quantity <= 10
                 ORDER BY p.quantity ASC
             ''')
-            
-            low_stock_items = cursor.fetchall()
-            return jsonify(low_stock_items)
+
+            return jsonify(cursor.fetchall())
         finally:
             cursor.close()
-            conn.close() 
+            conn.close()
+
+    @app.route('/dashboard/top-products/')
+    def get_top_products():
+        store_id = request.args.get('store_id')
+
+        try:
+            conn = database.get_connection()
+            cursor = conn.cursor(dictionary=True)
+
+            cursor.execute('''
+                SELECT product_name, quantity 
+                FROM products 
+                WHERE store_id = %s 
+                ORDER BY quantity DESC 
+                LIMIT 6
+            ''', (store_id,))
+            products = cursor.fetchall()
+            return jsonify(products)
+        finally:
+            cursor.close()
+            conn.close()
+
+
+    @app.route('/dashboard/low-stock-chart')
+    def low_stock_chart():
+        try:
+            conn = database.get_connection()
+            cursor = conn.cursor(dictionary=True)
+
+            cursor.execute('''
+                SELECT 
+                    p.product_name, p.quantity, s.store_name as store_name
+                    FROM products p
+                    LEFT JOIN stores s ON p.store_id = s.store_id
+                    WHERE p.quantity <= 10  
+                    ORDER BY p.quantity ASC
+             ''')
+
+            low_stock_item = cursor.fetchall()
+            return jsonify(low_stock_item)
+
+        finally:
+            cursor.close()
+            conn.close()
+
