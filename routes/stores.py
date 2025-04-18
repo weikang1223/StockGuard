@@ -1,5 +1,7 @@
-from flask import render_template, jsonify, request
+from flask import render_template, jsonify, request, Response
 from database import database
+import json
+from decimal import Decimal
 
 def init_store_routes(app):
     @app.route('/stores')
@@ -10,9 +12,10 @@ def init_store_routes(app):
             
             # Retrieve all stores along with their product counts
             cursor.execute('''
-                SELECT s.store_id, s.store_name, s.location, COUNT(p.product_id) AS product_count 
+                SELECT s.store_id, s.store_name, s.location, 
+                       COUNT(DISTINCT p.product_id) AS product_count 
                 FROM stores s 
-                LEFT JOIN store_products p ON s.store_id = p.store_id 
+                LEFT JOIN products p ON s.store_id = p.store_id 
                 GROUP BY s.store_id, s.store_name, s.location
             ''')
             stores = cursor.fetchall()
@@ -22,11 +25,13 @@ def init_store_routes(app):
             locations = [row['location'] for row in cursor.fetchall()]
             
             return render_template('stores.html', stores=stores, locations=locations)
+        except Exception as e:
+            print(f"Error retrieving stores: {str(e)}")
+            return jsonify({'success': False, 'message': str(e)}), 500
         finally:
             cursor.close()
             conn.close()
-    
-    # add function
+
     @app.route('/stores', methods=['POST'])
     def add_store():
         try:
@@ -46,90 +51,6 @@ def init_store_routes(app):
             cursor.close()
             conn.close()
 
-    @app.route('/stores/transfer', methods=['POST'])
-    def transfer_products():
-        try:
-            data = request.get_json()
-            conn = database.get_connection()
-            cursor = conn.cursor(dictionary=True)
-            
-            # Start transaction
-            cursor.execute('START TRANSACTION')
-            
-            # Check if source store has enough quantity
-            cursor.execute('''
-                SELECT quantity FROM store_products 
-                WHERE store_id = %s AND product_id = %s
-            ''', (data['from_store'], data['product_id']))
-            
-            source_qty = cursor.fetchone()
-            if not source_qty or source_qty['quantity'] < int(data['quantity']):
-                cursor.execute('ROLLBACK')
-                return jsonify({
-                    'success': False, 
-                    'message': 'Insufficient quantity in source store'
-                }), 400
-            
-            # Reduce quantity from source store
-            cursor.execute('''
-                UPDATE store_products 
-                SET quantity = quantity - %s 
-                WHERE store_id = %s AND product_id = %s
-            ''', (data['quantity'], data['from_store'], data['product_id']))
-            
-            # Add quantity to destination store
-            cursor.execute('''
-                INSERT INTO store_products (store_id, product_id, quantity)
-                VALUES (%s, %s, %s)
-                ON DUPLICATE KEY UPDATE quantity = quantity + %s
-            ''', (data['to_store'], data['product_id'], data['quantity'], data['quantity']))
-            
-            conn.commit()
-            return jsonify({'success': True})
-        except Exception as e:
-            if 'conn' in locals():
-                cursor.execute('ROLLBACK')
-            print(f"Error transferring products: {str(e)}")
-            return jsonify({'success': False, 'message': str(e)}), 500
-        finally:
-            cursor.close()
-            conn.close() 
-
-    @app.route('/stores/<int:store_id>/products')
-    def get_store_products(store_id):
-        try:
-            conn = database.get_connection()
-            cursor = conn.cursor(dictionary=True)
-            
-            cursor.execute('''
-                SELECT 
-                    sp.product_id, 
-                    p.product_name, 
-                    sp.quantity,
-                    p.price,
-                    c.categories_name as category_name,
-                    s.company_name as supplier_name,
-                    s.supplier_contact_person,
-                    s.phone as supplier_phone,
-                    s.email as supplier_email
-                FROM store_products sp
-                JOIN products p ON sp.product_id = p.product_id
-                LEFT JOIN categories c ON p.category_id = c.id
-                LEFT JOIN suppliers s ON p.supplier_id = s.id
-                WHERE sp.store_id = %s AND sp.quantity > 0
-            ''', (store_id,))
-            
-            products = cursor.fetchall()
-            return jsonify(products)
-        except Exception as e:
-            print(f"Error fetching store products: {str(e)}")
-            return jsonify({'error': str(e)}), 500
-        finally:
-            cursor.close()
-            conn.close() 
-
-
-    # edit function
     @app.route('/stores/<int:id>', methods=['PUT'])
     def update_store(id):
         try:
@@ -142,9 +63,7 @@ def init_store_routes(app):
                 SET store_name = %s,
                     location = %s
                 WHERE store_id = %s
-        ''', ( data['store_name'],  data['location'],
-            id
-        ))
+            ''', (data['store_name'], data['location'], id))
 
             if cursor.rowcount == 0:
                 return jsonify({'success': False, 'message': 'Store not found'}), 404
@@ -152,12 +71,12 @@ def init_store_routes(app):
             conn.commit()
             return jsonify({'success': True})
         except Exception as e:
+            print(f"Error updating store: {str(e)}")
             return jsonify({'success': False, 'message': str(e)}), 500
         finally:
             cursor.close()
             conn.close()
 
-    # delete function
     @app.route('/stores/<int:id>', methods=['DELETE'])
     def delete_store(id):
         try:
@@ -173,6 +92,40 @@ def init_store_routes(app):
         except Exception as e:
             print(f"Error deleting store: {str(e)}")
             return jsonify({'success': False, 'message': str(e)}), 500
+        finally:
+            cursor.close()
+            conn.close()
+
+    @app.route('/stores/<int:store_id>/products')
+    def get_store_products(store_id):
+        try:
+            conn = database.get_connection()
+            cursor = conn.cursor(dictionary=True)
+
+            cursor.execute('''
+                SELECT 
+                    p.product_name,
+                    p.quantity,
+                    c.categories_name,
+                    p.price     
+                FROM products p
+                LEFT JOIN categories c ON p.category_id = c.id
+                WHERE p.store_id = %s
+            ''', (store_id,))  # Fixed tuple here
+
+            products = cursor.fetchall()
+         #   print(f"Products for store {store_id}: {products}")
+
+            # Convert Decimal to float
+            def default_serializer(obj):
+                if isinstance(obj, Decimal):
+                    return float(obj)
+                raise TypeError
+
+            return Response(json.dumps(products, default=default_serializer), mimetype='application/json')
+        except Exception as e:
+            print(f"Error retrieving products for store {store_id}: {str(e)}")
+            return jsonify({'error': str(e)}), 500
         finally:
             cursor.close()
             conn.close()

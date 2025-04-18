@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 ${isLowStock ? '<i class="bi bi-exclamation-triangle-fill text-warning ms-2"></i>' : ''}
                             </td>
                             <td>${product.quantity}</td>
-                            <td>${product.category_name || 'N/A'}</td>
+                            <td>${product.categories_name || 'N/A'}</td>
                             <td>$${product.price ? product.price.toFixed(2) : 'N/A'}</td>
                         </tr>
                     `;
@@ -158,6 +158,7 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Error transferring products');
         }
     });
+
     // Edit funcationlity 
     const editButtons = document.querySelectorAll('.edit-btn');
     const editStoreModal = new bootstrap.Modal(document.getElementById('editStoreModal'));
@@ -238,39 +239,40 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // View Inventory functionality
+    // View inventory buttons
     const viewInventoryButtons = document.querySelectorAll('.view-inventory-btn');
-    const viewInventoryModal = new bootstrap.Modal(document.getElementById('viewInventoryModal'));
-    const inventoryTableBody = document.getElementById('inventoryTableBody');
 
-    viewInventoryButtons.forEach(button => {
+    viewInventoryButtons.forEach((button) => {
         button.addEventListener('click', async () => {
-            const storeId = button.dataset.id;
+            const storeId = button.dataset.id; 
             try {
                 const response = await fetch(`/stores/${storeId}/products`);
                 const products = await response.json();
-                
-                // Clear and update inventory table
-                inventoryTableBody.innerHTML = '';
-                products.forEach(product => {
-                    inventoryTableBody.innerHTML += `
-                        <tr>
-                            <td>${product.product_name}</td>
-                            <td>${product.quantity}</td>
-                            <td>${product.category_name || 'N/A'}</td>
-                            <td>$${product.price ? product.price.toFixed(2) : 'N/A'}</td>
-                        </tr>
-                    `;
-                });
-                
-                if (products.length === 0) {
+
+                const inventoryTableBody = document.getElementById('inventoryTableBody');
+                inventoryTableBody.innerHTML = ''; // Clear previous products
+
+                if (Array.isArray(products) && products.length > 0) {
+                    products.forEach((product) => {
+                        inventoryTableBody.innerHTML += `
+                            <tr>
+                                <td>${product.product_name}</td>
+                                <td>${product.quantity}</td>
+                                <td>${product.categories_name || 'N/A'}</td>
+                                <td>$${product.price ? product.price.toFixed(2) : 'N/A'}</td>
+                            </tr>
+                        `;
+                    });
+                } else {
                     inventoryTableBody.innerHTML = `
                         <tr>
                             <td colspan="4" class="text-center">No products in this store</td>
                         </tr>
                     `;
                 }
-                
+
+                // Show the inventory modal
+                const viewInventoryModal = new bootstrap.Modal(document.getElementById('viewInventoryModal'));
                 viewInventoryModal.show();
             } catch (error) {
                 console.error('Error fetching store inventory:', error);
@@ -301,7 +303,6 @@ document.addEventListener('DOMContentLoaded', function() {
         
         rows.forEach(row => {
             const storeName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
-            // Get location from the third cell (index 2) which contains the location
             const location = row.querySelector('td:nth-child(3)').textContent;
             
             const matchesSearch = storeName.includes(searchValue);

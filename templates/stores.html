@@ -13,7 +13,7 @@
                 <div class="d-flex gap-2">
                     <input type="text" id="searchInput" class="form-control flex-grow-1" placeholder="Search Stores...">
                     <select id="locationFilter" class="form-select flex-grow-1">
-                        <option value="">All location</option>
+                        <option value="">All Locations</option>
                         {% for location in locations %}
                         <option value="{{ location }}">{{ location }}</option>
                         {% endfor %}
@@ -42,20 +42,21 @@
                     </thead>
                     <tbody>
                         {% for store in stores %}
-                        <tr data-location="{{store.location}}">
+                        <tr data-location="{{ store.location }}">
                             <td>{{ store.store_id }}</td>
                             <td>{{ store.store_name }}</td>
                             <td>{{ store.location }}</td>
                             <td>{{ store.product_count }}</td>
                             <td class="text-center">
-                                <button class="btn btn-sm btn-info view-inventory-btn" data-id="{{ store.store_id }}">
+                                <button class="btn btn-sm btn-info view-inventory-btn" 
+                                        data-id="{{ store.store_id }}">
                                     <i class="bi bi-eye"></i>
                                 </button>
                                 <button class="btn btn-sm btn-primary edit-btn" 
-                                data-id="{{ store.store_id }}"
-                                data-name="{{ store.store_name }}"
-                                data-location="{{ store.location }}"
-                                data-products-count="{{ store.product_count }}">
+                                        data-id="{{ store.store_id }}"
+                                        data-name="{{ store.store_name }}"
+                                        data-location="{{ store.location }}"
+                                        data-products-count="{{ store.product_count }}">
                                     <i class="bi bi-pencil"></i>
                                 </button>
                                 <button class="btn btn-sm btn-danger delete-btn" data-id="{{ store.store_id }}">
@@ -218,18 +219,17 @@
     </div>
 </div>
 
-
 <!-- View Inventory Modal -->
 <div class="modal fade" id="viewInventoryModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Store Inventory</h5>
+                <h5 class="modal-title">Store Product</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <div class="table-responsive">
-                    <table class="table">
+                    <table class="table table-striped">
                         <thead>
                             <tr>
                                 <th>Product Name</th>
@@ -239,7 +239,7 @@
                             </tr>
                         </thead>
                         <tbody id="inventoryTableBody">
-                            <!-- Products will be loaded here dynamically -->
+                            <!-- Products will be inserted here -->
                         </tbody>
                     </table>
                 </div>
