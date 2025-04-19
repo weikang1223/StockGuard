@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const data = await response.json();
 
             if (data.length > 0) {
-                let message = '<div class="mb-2"><strong>Low Stock Products:</strong></div>';
+                let message = '<div class="mb-2"><strong>Low Stock Items:</strong></div>';
                 data.forEach(item => {
                     message += `
                         <div class="mb-2">
@@ -103,51 +103,69 @@ async function loadTopProducts(storeId) {
 }
 
 
-    async function loadLowStockChart() {
-        try {
-            const response = await fetch('/dashboard/low-stock-chart');
-            const data = await response.json();
+async function loadLowStockChart() {
+    try {
+        const response = await fetch('/dashboard/low-stock-chart');
+        const data = await response.json();
 
-            function capitalize(str){
-                return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
-            }
-
-            // Check if there are any low stock items
-            if (data.length > 0) {
-                const ctx = document.getElementById('lowStockChart').getContext('2d');
-                new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: data.map(product => `${capitalize(product.product_name)} (${capitalize(product.store_name)})`), // Product names and store name as labels
-                        datasets: [{
-                            label: 'Quantity Remaining',
-                            data: data.map(product => product.quantity), // Quantities of each product
-                            backgroundColor: 'rgba(255, 99, 132, 0.6)', // Color for the bars
-                            borderColor: 'rgb(65, 63, 63)',
-                            borderWidth: 2
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                precision: 0
-                            }
-                        },
-                        plugins: {
-                            legend: { display: false }
-                        }
-                    }
-                });
-            } else {
-                console.log('No low stock items found.');
-            }
-        } catch (error) {
-            console.error('Error fetching low stock data:', error);
+        function capitalize(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
         }
+
+        // Ensure only 5 products are displayed, if more than 5 are returned
+        const limitedData = data.slice(0, 5);
+
+        // Pad with empty data if fewer than 5 products
+        while (limitedData.length < 5) {
+            limitedData.push({ product_name: '', store_name: '', quantity: 0 });
+        }
+
+        // Prepare the labels and data arrays with placeholders
+        const labels = limitedData.map(product => 
+            product.product_name.trim() ? `${capitalize(product.product_name)} (${capitalize(product.store_name)})` : ''
+        );
+
+        const quantities = limitedData.map(product => product.quantity);
+
+        // Create a new chart
+        const ctx = document.getElementById('lowStockChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,  // Product names and store names as labels
+                datasets: [{
+                    label: 'Quantity Remaining',
+                    data: quantities,  // Quantities of each product
+                    backgroundColor: 'rgba(255, 99, 132, 0.6)',  // Color for the bars
+                    borderColor: 'rgb(65, 63, 63)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,  
+                scales: {
+                    x: {
+                        
+                        barPercentage: 0.8,  
+                        categoryPercentage: 0.8,  
+                    },
+                    y: {
+                        beginAtZero: true,
+                        precision: 0
+                    }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching low stock data:', error);
     }
+}
 
-    // Load the low stock chart when the page is ready
-    loadLowStockChart();
+// Load the low stock chart when the page is ready
+loadLowStockChart();
+
+
 });
-
