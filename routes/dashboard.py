@@ -4,7 +4,7 @@ from database import database
 def init_dashboard_routes(app):
     @app.route('/dashboard')
     def dashboard():
-        try:
+        try:         
             conn = database.get_connection()
             cursor = conn.cursor(dictionary=True)
 
@@ -100,4 +100,5 @@ def init_dashboard_routes(app):
         finally:
             cursor.close()
             conn.close()
+
 

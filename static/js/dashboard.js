@@ -142,12 +142,12 @@ async function loadLowStockChart() {
                 }]
             },
             options: {
-                responsive: true,  
+                responsive: true,  // Make sure chart is responsive to resizing
                 scales: {
                     x: {
-                        
-                        barPercentage: 0.8,  
-                        categoryPercentage: 0.8,  
+                        // Keep bar size fixed
+                        barPercentage: 0.8,  // Control the width of bars
+                        categoryPercentage: 0.8,  // Control spacing between bars
                     },
                     y: {
                         beginAtZero: true,
@@ -166,6 +166,5 @@ async function loadLowStockChart() {
 
 // Load the low stock chart when the page is ready
 loadLowStockChart();
-
 
 });
