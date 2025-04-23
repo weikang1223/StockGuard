@@ -13,11 +13,12 @@ document.getElementById("loginForm").addEventListener("submit", async function (
     });
 
     const data = await response.json();
-    
+    const errorMessage = document.getElementById("loginError");
+
     if (response.ok) {
+        errorMessage.classList.add("d-none");
         window.location.href = "/dashboard";
     } else {
-        const errorMessage = document.getElementById("error-message");
         errorMessage.textContent = data.message || "Login failed";
         errorMessage.classList.remove("d-none");
     }
