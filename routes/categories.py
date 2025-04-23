@@ -1,4 +1,4 @@
-from flask import render_template, jsonify, request
+from flask import render_template, jsonify, request,session
 from database import database
 
 def init_category_routes(app):
@@ -9,7 +9,8 @@ def init_category_routes(app):
             cursor = conn.cursor(dictionary=True)
             cursor.execute('SELECT id, categories_name FROM categories')
             categories = cursor.fetchall()
-            return render_template('categories.html', categories=categories)
+            username = session.get('username')
+            return render_template('categories.html', categories=categories, username=username)
         finally:
             cursor.close()
             conn.close()

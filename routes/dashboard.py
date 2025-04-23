@@ -1,4 +1,4 @@
-from flask import render_template, request, jsonify
+from flask import render_template, request, jsonify,session
 from database import database
 
 def init_dashboard_routes(app):
@@ -22,11 +22,14 @@ def init_dashboard_routes(app):
             cursor.execute('SELECT COUNT(*) as low_stock FROM products WHERE quantity <= 10')
             low_stock = cursor.fetchone()['low_stock']
 
+            username = session.get('username')
+
             return render_template('dashboard.html',
                                    stores=stores,
                                    total_products=total_products,
                                    total_value=total_value,
-                                   low_stock=low_stock)
+                                   low_stock=low_stock, 
+                                   username=username)
         finally:
             cursor.close()
             conn.close()

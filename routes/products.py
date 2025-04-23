@@ -1,4 +1,4 @@
-from flask import render_template, jsonify, request
+from flask import render_template, jsonify, request,session
 from database import database
 from datetime import datetime
 
@@ -56,13 +56,16 @@ def init_product_routes(app):
             # Get stores
             cursor.execute('SELECT store_id, store_name FROM stores')
             stores = cursor.fetchall()
+
+            username = session.get('username')
             
             return render_template(
                 'products.html',
                 products=products,
                 categories=categories,
                 suppliers=suppliers,
-                stores=stores
+                stores=stores,
+                username=username
             )
             
         except Exception as e:

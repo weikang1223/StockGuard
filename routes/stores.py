@@ -1,4 +1,4 @@
-from flask import render_template, jsonify, request, Response
+from flask import render_template, jsonify, request, Response,session
 from database import database
 import json
 from decimal import Decimal
@@ -23,8 +23,10 @@ def init_store_routes(app):
             # Fetch unique locations for the filter dropdown
             cursor.execute('SELECT DISTINCT location FROM stores ORDER BY location')
             locations = [row['location'] for row in cursor.fetchall()]
+
+            username = session.get('username')
             
-            return render_template('stores.html', stores=stores, locations=locations)
+            return render_template('stores.html', stores=stores, locations=locations,username=username)
         except Exception as e:
             print(f"Error retrieving stores: {str(e)}")
             return jsonify({'success': False, 'message': str(e)}), 500

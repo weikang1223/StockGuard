@@ -1,4 +1,4 @@
-from flask import render_template, jsonify, request
+from flask import render_template, jsonify, request,session
 from database import database
 
 def init_user_routes(app):
@@ -9,7 +9,8 @@ def init_user_routes(app):
             cursor = conn.cursor(dictionary=True)
             cursor.execute('SELECT id, username, role FROM users')
             users = cursor.fetchall()
-            return render_template('users.html', users=users)
+            username = session.get('username')
+            return render_template('users.html', users=users, username=username)
         finally:
             cursor.close()
             conn.close()

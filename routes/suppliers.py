@@ -1,4 +1,4 @@
-from flask import render_template, jsonify, request
+from flask import render_template, jsonify, request,session
 from database import database
 
 def init_supplier_routes(app):
@@ -9,7 +9,8 @@ def init_supplier_routes(app):
             cursor = conn.cursor(dictionary=True)
             cursor.execute('SELECT id, company_name, contact_name, phone, email, address FROM suppliers')
             suppliers = cursor.fetchall()
-            return render_template('suppliers.html', suppliers=suppliers)
+            username = session.get('username')
+            return render_template('suppliers.html', suppliers=suppliers, username=username)
         finally:
             cursor.close()
             conn.close()
