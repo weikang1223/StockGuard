@@ -23,12 +23,20 @@
                 StockGuard Inventory Management
             </div>
             <div class="list-group list-group-flush">
-                <!-- Dashboard -->
-                <a href="{{ url_for('dashboard') }}" 
-                   class="list-group-item list-group-item-action {% if request.endpoint == 'dashboard' %}active{% endif %}">
-                    <i class="bi bi-speedometer2"></i> Dashboard
-                </a>
-
+                 <!-- Dashboard -->
+                 {% if session.get('role') == 'manager' %}
+                 <!-- Dashboard for manager role -->
+                 <a href="{{ url_for('dashboard') }}" 
+                    class="list-group-item list-group-item-action {% if request.endpoint == 'dashboard' %}active{% endif %}">
+                     <i class="bi bi-speedometer2"></i> Dashboard 
+                 </a>
+             {% elif session.get('role') == 'store admin' %}
+                 <!-- Dashboard for store admin role -->
+                 <a href="{{ url_for('user_dashboard') }}" 
+                    class="list-group-item list-group-item-action {% if request.endpoint == 'user_dashboard' %}active{% endif %}">
+                     <i class="bi bi-speedometer2"></i> Dashboard 
+                 </a>
+             {% endif %}
                 <!-- Suppliers -->
                 <a href="{{ url_for('suppliers') }}" 
                    class="list-group-item list-group-item-action {% if request.endpoint == 'suppliers' %}active{% endif %}">
