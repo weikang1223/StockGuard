@@ -48,6 +48,12 @@
                    class="list-group-item list-group-item-action {% if request.endpoint == 'categories' %}active{% endif %}">
                     <i class="bi bi-list"></i> Categories
                 </a>
+                
+                 <!-- Stores -->
+                 <a href="{{ url_for('stores') }}" 
+                 class="list-group-item list-group-item-action {% if request.endpoint == 'stores' %}active{% endif %}">
+                  <i class="bi bi-shop"></i> Stores
+              </a>
 
                 <!-- Products -->
                 <a href="{{ url_for('products') }}" 
@@ -55,12 +61,6 @@
                     <i class="bi bi-box"></i> Products
                 </a>
 
-                <!-- Stores -->
-                <a href="{{ url_for('stores') }}" 
-                   class="list-group-item list-group-item-action {% if request.endpoint == 'stores' %}active{% endif %}">
-                    <i class="bi bi-shop"></i> Stores
-                </a>
-                
                 <!-- Transactions -->
                 <a href="{{ url_for('get_transactions') }}" 
                    class="list-group-item list-group-item-action {% if request.endpoint == 'get_transactions' %}active{% endif %}">
