@@ -61,11 +61,11 @@ def init_product_routes(app):
             
             return render_template(
                 'products.html',
+                username= username,
                 products=products,
                 categories=categories,
                 suppliers=suppliers,
-                stores=stores,
-                username=username
+                stores=stores
             )
             
         except Exception as e:
@@ -263,10 +263,177 @@ def init_product_routes(app):
           ''')
           
           transactions = cursor.fetchall()
-          return render_template('transactions.html', transactions=transactions)
+          username = session.get('username')
+          return render_template('transactions.html', transactions=transactions, username=username)
       except Exception as e:
           print(f"Error fetching transactions: {e}")
           return jsonify({'error': str(e)}), 500
       finally:
           cursor.close()
           conn.close()
+
+    @app.route('/user_products')
+    def user_products():
+        try:
+            # Retrieve the store_id associated with the logged-in user
+            store_id = session.get('store_id')
+            print(f"Store ID from session: {store_id}")
+
+            if not store_id:
+                return jsonify({'error': 'Store not associated with user'}), 400
+
+            # Get products for the user's store
+            conn = database.get_connection()
+            cursor = conn.cursor(dictionary=True)
+
+            cursor.execute('''
+                SELECT p.product_id, p.product_name, p.quantity, p.price, 
+                       c.categories_name AS category_name, c.id AS category_id,
+                       s.company_name AS supplier_name, s.id AS supplier_id,
+                       st.store_name, st.store_id
+                FROM products p
+                LEFT JOIN categories c ON p.category_id = c.id
+                LEFT JOIN suppliers s ON p.supplier_id = s.id
+                LEFT JOIN stores st ON p.store_id = st.store_id
+                WHERE p.store_id = %s
+            ''', (store_id,))
+
+            products = cursor.fetchall()
+
+            username = session.get('username')
+
+            cursor.execute('SELECT id, categories_name FROM categories')
+            categories = cursor.fetchall()
+            
+            # Get suppliers
+            cursor.execute('SELECT id, company_name FROM suppliers')
+            suppliers = cursor.fetchall()
+
+            return render_template(
+                'user_products.html',  # You would create a template to display these products
+                username=username,
+                products=products,
+                categories = categories,
+                suppliers=suppliers, 
+                store_id=session.get('store_id')
+            )
+
+        except Exception as e:
+            print(f"Error in user_products route: {str(e)}")
+            return jsonify({'error': str(e)}), 500
+        finally:
+            cursor.close()
+            conn.close()
+
+    @app.route('/user_products', methods=['POST'])
+    def add_user_product():
+        try:
+            # Ensure the user is associated with a store
+            store_id = session.get('store_id')
+            print(f"Store ID from session: {store_id}")
+            if not store_id:
+                return jsonify({'error': 'Store not associated with user'}), 400
+
+            data = request.get_json()
+
+            conn = database.get_connection()
+            cursor = conn.cursor(dictionary=True)
+           
+            
+            # Start transaction
+            cursor.execute('START TRANSACTION')
+
+            # Insert the product for the user's store
+            cursor.execute('''
+                INSERT INTO products 
+                (product_name, category_id, supplier_id, store_id, quantity, price) 
+                VALUES (%s, %s, %s, %s, %s, %s)
+            ''', (
+                data['product_name'],
+                data['category_id'],
+                data['supplier_id'],
+                store_id,  # Use the store_id associated with the user
+                data['quantity'],
+                data['price']
+            ))
+
+
+            # Get the inserted product ID
+            product_id = cursor.lastrowid
+
+
+            # Record stock-in transaction
+            cursor.execute('''
+                INSERT INTO product_transactions 
+                (product_id, quantity, transaction_date, transaction_type, created_by) 
+                VALUES (%s, %s, %s, %s, %s)
+            ''', (
+                product_id,
+                data['quantity'],
+                data.get('date', datetime.now()),  # Use provided date
+                'in',
+                session.get('user_id')  # Use the user ID of the logged-in user
+            ))
+
+            conn.commit()
+            return jsonify({'success': True})
+
+        except Exception as e:
+            if 'conn' in locals():
+                cursor.execute('ROLLBACK')
+            print(f"Error adding product: {str(e)}") 
+            return jsonify({'success': False, 'message': str(e)}), 500
+        finally:
+            cursor.close()
+            conn.close()
+
+    @app.route('/user_products/stock-out', methods=['POST'])
+    def user_stock_out():
+        try:
+            store_id = session.get('store_id')
+            if not store_id:
+                return jsonify({'error': 'Store not associated with user'}), 400
+
+            data = request.get_json()
+            product_id = data.get('product_id')
+            quantity = data.get('quantity')
+            date = data.get('date')
+
+            if not all([product_id, quantity, date]):
+                return jsonify({'success': False, 'message': 'Missing required fields'}), 400
+            
+            
+            conn = database.get_connection()
+            cursor = conn.cursor(dictionary=True)
+
+            cursor.execute('START TRANSACTION')
+
+            # Check if product exists and belongs to the store
+            cursor.execute('SELECT quantity FROM products WHERE product_id = %s AND store_id = %s', (product_id, store_id))
+            product = cursor.fetchone()
+
+            if not product:
+                cursor.execute('ROLLBACK')
+                return jsonify({'success': False, 'message': 'Product not found in store'}), 404
+
+            if product['quantity'] < int(quantity):
+                cursor.execute('ROLLBACK')
+                return jsonify({'success': False, 'message': 'Insufficient quantity in stock'}), 400
+
+            new_quantity = product['quantity'] - int(quantity)
+            cursor.execute('UPDATE products SET quantity = %s WHERE product_id = %s', (new_quantity, product_id))
+
+            cursor.execute('INSERT INTO product_transactions (product_id, quantity, transaction_date, transaction_type, created_by) VALUES (%s, %s, %s, %s, %s)', 
+                (product_id, quantity, date, 'Out', session.get('user_id')))
+
+            conn.commit()
+            return jsonify({'success': True, 'message': 'Stock out recorded successfully'})
+
+        except Exception as e:
+            if 'conn' in locals():
+                cursor.execute('ROLLBACK')
+            print(f"Error recording stock out: {str(e)}")
+            return jsonify({'success': False, 'message': str(e)}), 500
+        finally:
+            cursor.close()
+            conn.close()

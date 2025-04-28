@@ -56,10 +56,15 @@
               </a>
 
                 <!-- Products -->
-                <a href="{{ url_for('products') }}" 
-                   class="list-group-item list-group-item-action {% if request.endpoint == 'products' %}active{% endif %}">
+                {% if session.get('role') == 'manager' %}
+                <a href="{{ url_for('products') }}" class="list-group-item list-group-item-action {% if request.endpoint == 'products' %}active{% endif %}">
                     <i class="bi bi-box"></i> Products
                 </a>
+                {% elif session.get('role') == 'store admin' %}
+                <a href="{{ url_for('user_products') }}" class="list-group-item list-group-item-action {% if request.endpoint == 'user_products' %}active{% endif %}">
+                    <i class="bi bi-box"></i> Products
+                </a>
+                {% endif %}
 
                 <!-- Transactions -->
                 <a href="{{ url_for('get_transactions') }}" 
