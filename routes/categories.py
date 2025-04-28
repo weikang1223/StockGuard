@@ -1,9 +1,11 @@
-from flask import render_template, jsonify, request,session
+from flask import render_template, jsonify, request,session, redirect,url_for
 from database import database
 
 def init_category_routes(app):
     @app.route('/categories')
     def categories():
+        if session.get('role') != 'manager':
+            return redirect(url_for('user_categories'))
         try:
             conn = database.get_connection()
             cursor = conn.cursor(dictionary=True)
@@ -17,6 +19,8 @@ def init_category_routes(app):
 
     @app.route('/categories', methods=['POST'])
     def add_category():
+        if session.get('role') != 'manager':
+            return redirect(url_for('user_categories'))
         try:
             data = request.get_json()
             conn = database.get_connection()
@@ -38,6 +42,8 @@ def init_category_routes(app):
 
     @app.route('/categories/<int:id>', methods=['PUT'])
     def update_category(id):
+        if session.get('role') != 'manager':
+            return redirect(url_for('user_categories'))
         try:
             data = request.get_json()
             conn = database.get_connection()
@@ -63,6 +69,8 @@ def init_category_routes(app):
 
     @app.route('/categories/<int:id>', methods=['DELETE'])
     def delete_category(id):
+        if session.get('role') != 'manager':
+            return redirect(url_for('user_categories'))
         try:
             conn = database.get_connection()
             cursor = conn.cursor(dictionary=True)
@@ -77,6 +85,22 @@ def init_category_routes(app):
         except Exception as e:
             print(f"Error deleting category: {str(e)}")
             return jsonify({'success': False, 'message': str(e)}), 500
+        finally:
+            cursor.close()
+            conn.close()
+
+
+    @app.route('/user_categories')
+    def user_categories():
+        if session.get('role') != 'store admin':
+            return redirect(url_for('categories'))
+        try:
+            conn = database.get_connection()
+            cursor = conn.cursor(dictionary=True)
+            cursor.execute('SELECT id, categories_name FROM categories')
+            categories = cursor.fetchall()
+            username = session.get('username')
+            return render_template('user_categories.html', categories=categories, username=username)
         finally:
             cursor.close()
             conn.close()
