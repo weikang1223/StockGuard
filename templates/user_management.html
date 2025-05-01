@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1 class="h3 mb-4 text-gray-800">User Management</h1>
+
+    <div class="card shadow mb-4">
+        <div class="card-body">
+        
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Role</th>
+                        <th>Store</th>
+                        <th class="text-center" style="width: 150px;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.id }}</td>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.role }}</td>
+                        <td>{{ user.store_name or 'None' }}</td>
+                        <td class="text-center">
+                            <button class="btn btn-sm btn-primary edit-btn"
+                                    data-id="{{ user.id }}"
+                                    data-username="{{ user.username }}"
+                                    data-role="{{ user.role }}"
+                                    data-store-id="{{ user.store_id }}">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Edit User Modal -->
+<div class="modal fade" id="editUserModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editUserForm">
+                    <input type="hidden" id="editUserId">
+                    <div class="mb-3">
+                        <label for="editUsername" class="form-label">Username</label>
+                        <input type="text" id="editUsername" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editPassword" class="form-label">Password</label>
+                        <input type="password" id="editPassword" class="form-control" required>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/user_management.js') }}"></script>
+{% endblock %}

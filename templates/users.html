@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="container">
-    <h1 class="h3 mb-4 text-gray-800">User Management </h1>
+    <h1 class="h3 mb-4 text-gray-800">User Management</h1>
 
     <div class="card shadow mb-4">
         <div class="card-body">
@@ -18,6 +18,7 @@
                         <th>ID</th>
                         <th>Username</th>
                         <th>Role</th>
+                        <th>Store</th>
                         <th class="text-center" style="width: 150px;">Actions</th>
                     </tr>
                 </thead>
@@ -26,18 +27,22 @@
                     <tr>
                         <td>{{ user.id }}</td>
                         <td>{{ user.username }}</td>
-                        <td>{{ user.role }}</td>
-                        <td>
-                            <button class="btn btn-warning btn-sm edit-btn" 
-                                    data-id="{{ user.id }}" 
-                                    data-username="{{ user.username }}" 
-                                    data-role="{{ user.role }}" >
+                        <td>{{ user.role | title  }}</td>
+                        <td>{{ user.store_name or 'None' }}</td>
+                        <td class="text-center">
+                            <button class="btn btn-sm btn-primary edit-btn" 
+                                    data-id="{{ user.id }}"
+                                    data-username="{{ user.username }}"
+                                    data-role="{{ user.role }}"
+                                    data-store-id="{{ user.store_id }}">
                                 <i class="bi bi-pencil"></i>
                             </button>
-                            <button class="btn btn-sm btn-danger delete-btn" data-id="{{ user.id }}">
+                            <button class="btn btn-sm btn-danger delete-btn"
+                                    data-id="{{ user.id }}">
                                 <i class="bi bi-trash"></i>
                             </button>
                         </td>
+                        
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -54,48 +59,55 @@
                 <h5 class="modal-title">Add User</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="addUserForm">
-                <div class="modal-body">
+            <div class="modal-body">
+                <form id="addUserForm">
                     <div class="mb-3">
                         <label for="id" class="form-label">User ID</label>
-                        <input type="number" class="form-control" id="id" name="id" required>
+                        <input type="text" id="id" class="form-control" required>
                     </div>
                     <div class="mb-3">
                         <label for="username" class="form-label">Username</label>
-                        <input type="text" class="form-control" id="username" name="username" required>
+                        <input type="text" id="username" class="form-control" required>
                     </div>
                     <div class="mb-3">
                         <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="password" name="password" required>
+                        <input type="password" id="password" class="form-control" required>
                     </div>
                     <div class="mb-3">
                         <label for="role" class="form-label">Role</label>
-                        <select class="form-select" id="role" name="role" required>
-                            <option value="admin">Admin</option>
-                            <option value="manager">Manager</option>
-                            <option value="staff">Staff</option>
+                        <select id="role" class="form-select" required>
+                            <option value="">Select Role</option>
+                            {% for role in roles %}
+                                <option value="{{ role }}">{{ role | capitalize }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>               
+                    <div class="mb-3" id="store_id_div">
+                        <label for="store_id" class="form-label">Store</label>
+                        <select id="store_id" class="form-select" >
+                            <option value="">Select Store</option>
+                            {% for store in stores %}
+                            <option value="{{ store.store_id }}">{{ store.store_name }}</option>
+                            {% endfor %}
                         </select>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary">Add User</button>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- Delete Confirmation Modal -->
+<!-- Delete User Modal -->
 <div class="modal fade" id="deleteUserModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Delete User</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                Are you sure you want to delete this user?
+                <p>Are you sure you want to delete this user?</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -110,39 +122,47 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editUserModalLabel">Edit User</h5>
+                <h5 class="modal-title">Edit User</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="editUserForm">
-                <div class="modal-body">
-                <input type="hidden" id="editUserId">
-                <div class="mb-3">
-                    <label for="editUsername" class="form-label">Username</label>
-                    <input type="text" class="form-control" id="editUsername" required>
-                </div>
-                <div class="mb-3">
-                    <label for="editPassword" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="editPassword">
-                </div>
-                <div class="mb-3">
-                    <label for="editRole" class="form-label">Role</label>
-                    <select class="form-select" id="editRole" required>
-                        <option value="admin">Admin</option>
-                        <option value="manager">Manager</option>
-                        <option value="staff">Staff</option>
-                    </select>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save changes</button>
-                </div>
-            </form>
+            <div class="modal-body">
+                <form id="editUserForm">
+                    <input type="hidden" id="editUserId">
+                    <div class="mb-3">
+                        <label for="editUsername" class="form-label">Username</label>
+                        <input type="text" id="editUsername" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editPassword" class="form-label">Password</label>
+                        <input type="password" id="editPassword" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editRole" class="form-label">Role</label>
+                        <select id="editRole" class="form-select" required>
+                            <option value="">Select Role</option>
+                            {% for role in roles %}
+                                <option value="{{ role }}">{{ role | capitalize }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>               
+                    <div class="mb-3" id="store_id_div">
+                        <label for="editStoreId" class="form-label">Store</label>
+                        <select id="editStoreId" class="form-select" required>
+                            {% for store in stores %}
+                            <option value="{{ store.store_id }}">{{ store.store_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>
-
 {% endblock %}
-
 
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/users.js') }}"></script>

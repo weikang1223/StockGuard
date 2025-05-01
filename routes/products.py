@@ -437,3 +437,4 @@ def init_product_routes(app):
         finally:
             cursor.close()
             conn.close()
+            

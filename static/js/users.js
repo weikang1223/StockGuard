@@ -7,7 +7,10 @@ document.addEventListener('DOMContentLoaded', function() {
             id: document.getElementById('id').value,
             username: document.getElementById('username').value,
             password: document.getElementById('password').value,  // Consider hashing in production
-            role: document.getElementById('role').value
+            role: document.getElementById('role').value,
+            store_id: document.getElementById('store_id').value // Store ID for store_admin role
+
+            
         };
 
         fetch('/users', {
@@ -38,26 +41,40 @@ document.addEventListener('DOMContentLoaded', function() {
             const userId = this.getAttribute('data-id');
             const username = this.getAttribute('data-username');
             const role = this.getAttribute('data-role');
+            const storeId = this.getAttribute('data-store-id');
             
             document.getElementById('editUserId').value = userId;
             document.getElementById('editUsername').value = username;
             document.getElementById('editRole').value = role;
-            
+            document.getElementById('editStoreId').value = storeId;
+
+            const roleSelect = document.getElementById('editRole');
+        const storeSelect = document.getElementById('editStoreId');
+
+        if (role === 'manager') {
+            roleSelect.setAttribute('disabled', true);
+            storeSelect.setAttribute('disabled', true);
+        } else {
+            roleSelect.removeAttribute('disabled');
+            storeSelect.removeAttribute('disabled');
+        }
+    
+            // Show modal
             new bootstrap.Modal(document.getElementById('editUserModal')).show();
         });
     });
-
-    // Update User
+    
     document.getElementById('editUserForm').addEventListener('submit', function(e) {
         e.preventDefault();
         
         const userId = document.getElementById('editUserId').value;
         const formData = {
             username: document.getElementById('editUsername').value,
-            password: document.getElementById('editPassword').value,  // Consider hashing in production
-            role: document.getElementById('editRole').value
+            password: document.getElementById('editPassword').value,
+            role: document.getElementById('editRole').value,  // Correct role value
+            store_id: document.getElementById('editStoreId').value // Store ID for store_admin role
         };
-
+    
         fetch(`/users/${userId}`, {
             method: 'PUT',
             headers: {
@@ -79,20 +96,18 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Error updating user');
         });
     });
+    
 
     // Delete User
     let userToDelete = null;
 
-    // Attach click listeners to all delete buttons
     document.querySelectorAll('.delete-btn').forEach(button => {
         button.addEventListener('click', function () {
             userToDelete = this.getAttribute('data-id');
-        //  alert('Delete button clicked for user ID: ' + userToDelete); 
             new bootstrap.Modal(document.getElementById('deleteUserModal')).show();
         });
     });
 
-    // Confirm deletion when delete button in modal is clicked
     document.getElementById('confirmDeleteUser').addEventListener('click', function () {
         if (userToDelete) {
             fetch(`/users/${userToDelete}`, {
@@ -109,4 +124,5 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     });
-}); 
+});
+
