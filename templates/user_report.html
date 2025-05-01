@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 text-gray-800">User Report</h1>
+    </div>
+
+    <!-- Product List Section -->
+    <div class="card shadow mb-4" id="productList">
+        <div class="card-body">
+            <h4 class="mb-3">Product List</h4>
+
+            <!-- Filters -->
+            <div class="d-flex justify-content-between mb-3">
+                <div class="d-flex gap-2">
+                    <input type="text" id="productSearch" class="form-control w-40" placeholder="Search Product Name">
+                    <select id="lowStockFilter" class="form-select w-40">
+                        <option value="">All Stock Levels</option>
+                        <option value="low">Low Stock (≤ 10)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Product Table -->
+            <table class="table table-bordered" id="productTable">
+                <thead>
+                    <tr>
+                        <th>Product ID</th>
+                        <th>Store</th>
+                        <th>Product Name</th>
+                        <th>Quantity</th>
+                        <th>Price (SGD)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in products %}
+                    <tr data-name="{{ product.product_name }}" data-quantity="{{ product.quantity }}">
+                        <td>{{ product.product_id }}</td>
+                        <td>{{ product.store_name }}</td>
+                        <td>{{ product.product_name }}</td>
+                        <td>{{ product.quantity }}</td>
+                        <td>{{ product.price }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Toggle Script -->
+<script src="{{ url_for('static', filename='js/user_report.js') }}"></script>
+{% endblock %}

@@ -6,6 +6,7 @@ from routes.suppliers import init_supplier_routes
 from routes.stores import init_store_routes
 from routes.users import init_user_routes
 from routes.login import init_login_routes
+from routes.report import init_report_routes
 from database import database
 
 app = Flask(__name__, static_folder='static')
@@ -29,8 +30,9 @@ else:
     init_product_routes(app)      # product routes
     init_supplier_routes(app)      # supplier routes
     init_store_routes(app)        # store routes
-    init_user_routes(app)
-    init_login_routes(app)
+    init_user_routes(app)         # user routes
+    init_login_routes(app)        # login routes
+    init_report_routes(app)       # report routes
 
     @app.route('/')
     def index():
