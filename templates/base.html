@@ -57,10 +57,15 @@
                 </a>
                 {% endif %}
                  <!-- Stores -->
-                 <a href="{{ url_for('stores') }}" 
-                 class="list-group-item list-group-item-action {% if request.endpoint == 'stores' %}active{% endif %}">
-                  <i class="bi bi-shop"></i> Stores
-              </a>
+                 {% if session.get('role') == 'manager' %}
+                <a href="{{ url_for('stores') }}" class="list-group-item list-group-item-action {% if request.endpoint == 'stores' %}active{% endif %}">
+                    <i class="bi bi-shop"></i> Stores
+                </a>
+                {% elif session.get('role') == 'store admin' %}
+                <a href="{{ url_for('user_stores') }}" class="list-group-item list-group-item-action {% if request.endpoint == 'user_stores' %}active{% endif %}">
+                    <i class="bi bi-shop"></i> Stores
+                </a>
+                {% endif %}
 
                 <!-- Products -->
                 {% if session.get('role') == 'manager' %}
@@ -74,10 +79,11 @@
                 {% endif %}
 
                 <!-- Transactions -->
-                <a href="{{ url_for('get_transactions') }}" 
-                   class="list-group-item list-group-item-action {% if request.endpoint == 'get_transactions' %}active{% endif %}">
-                    <i class="bi bi-arrow-left-right"></i> Product Transactions
-                </a>
+                {% if session.get('role') == 'manager' %}
+                    <a href="{{ url_for('get_transactions') }}" class="list-group-item list-group-item-action {% if request.endpoint == 'get_transactions' %}active{% endif %}">
+                        <i class="bi bi-arrow-left-right"></i> Product Transactions
+                    </a>
+                {% endif %}
             </div>
         </div>
 
