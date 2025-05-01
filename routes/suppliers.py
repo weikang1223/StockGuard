@@ -124,3 +124,32 @@ def init_supplier_routes(app):
         finally:
             cursor.close()
             conn.close()
+
+    @app.route('/user_suppliers', methods=['POST'])
+    def add_user_supplier():
+        if session.get('role') != 'store admin':
+            return redirect(url_for('suppliers'))
+        try:
+            data = request.get_json()
+            conn = database.get_connection()
+            cursor = conn.cursor(dictionary=True)
+            
+            cursor.execute('''
+                INSERT INTO suppliers (company_name, contact_name, phone, email, address) 
+                VALUES (%s, %s, %s, %s, %s)
+            ''', (
+                data['company_name'],
+                data['contact_person'],
+                data['phone'],
+                data['email'],
+                data['address']
+            ))
+            
+            conn.commit()
+            return jsonify({'success': True})
+        except Exception as e:
+            print(f"Error adding supplier: {str(e)}")
+            return jsonify({'success': False, 'message': str(e)}), 500
+        finally:
+            cursor.close()
+            conn.close()

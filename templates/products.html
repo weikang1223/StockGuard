@@ -53,7 +53,8 @@
                             <td>{{ product.supplier_name }}</td>
                             <td>{{ product.store_name or 'Not assigned' }}</td>
                             <td>{{ product.quantity }}</td>
-                            <td>{{ "%.2f"|format(product.price) }}</td>
+                       <!--     <td>{{ "%.2f"|format(product.price) }}</td> -->
+                            <td>{{ product.price }}</td>
                             <td class="text-center">
                                 <button class="btn btn-sm btn-primary edit-btn" 
                                         data-id="{{ product.product_id }}"
@@ -120,11 +121,11 @@
                     </div>
                     <div class="mb-3">
                         <label for="quantity" class="form-label">Quantity</label>
-                        <input type="number" class="form-control" id="quantity" name="quantity" min="0" required>
+                        <input type="number" class="form-control" id="quantity" name="quantity" min="0" step="1.0" required>
                     </div>
                     <div class="mb-3">
                         <label for="price" class="form-label">Price (SGD)</label>
-                        <input type="number" class="form-control" id="price" name="price" min="0" step="1.0" required>
+                        <input type="number" class="form-control" id="price" name="price" min="0" step="0.01" required>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -180,11 +181,11 @@
                     </div>
                     <div class="mb-3">
                         <label for="editQuantity" class="form-label">Quantity</label>
-                        <input type="number" class="form-control" id="editQuantity" name="quantity" min="0" required>
+                        <input type="number" class="form-control" id="editQuantity" name="quantity" min="0" step="1.0" required>
                     </div>
                     <div class="mb-3">
                         <label for="editPrice" class="form-label">Price (SGD)</label>
-                        <input type="number" class="form-control" id="editPrice" name="price" min="0" step="1.0" required>
+                        <input type="number" class="form-control" id="editPrice" name="price" min="0" step="0.01" required>
                     </div>
                 </div>
                 <div class="modal-footer">
