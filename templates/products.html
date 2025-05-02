@@ -17,6 +17,18 @@
                         <option value="{{ store.store_id }}">{{ store.store_name }}</option>
                         {% endfor %}
                     </select>
+                    <select id="categoriesFilter" class="form-select w-40">
+                        <option value="">All Categories</option>
+                        {% for category in categories %}
+                        <option value="{{ category.id }}">{{ category.categories_name }}</option>
+                        {% endfor %}
+                    </select>
+                    <select id="supplierFilter" class="form-select w-40">
+                        <option value="">All Supplier</option>
+                        {% for supplier in suppliers %}
+                        <option value="{{ supplier.id }}">{{ supplier.company_name }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
                 <div>
                     <a href="{{ url_for('get_transactions') }}" class="btn btn-info me-2">
@@ -46,13 +58,26 @@
                     </thead>
                     <tbody>
                         {% for product in products %}
-                        <tr data-store-id="{{ product.store_id }}">
+                        <tr data-store-id="{{ product.store_id }}" data-category-id="{{ product.category_id }}"
+                        data-supplier-id="{{ product.supplier_id }}">
                             <td>{{ product.product_id }}</td>
                             <td>{{ product.product_name }}</td>
                             <td>{{ product.category_name }}</td>
                             <td>{{ product.supplier_name }}</td>
                             <td>{{ product.store_name or 'Not assigned' }}</td>
-                            <td>{{ product.quantity }}</td>
+                            <td>
+                                <span class="
+                                    {% if product.quantity == 0 %}
+                                        text-danger fw-bold
+                                    {% elif product.quantity <= 10 %}
+                                        text-warning fw-bold
+                                    {% else %}
+                                        text-success fw-bold
+                                    {% endif %}
+                                ">
+                                    {{ product.quantity }}
+                                </span>
+                            </td>
                        <!--     <td>{{ "%.2f"|format(product.price) }}</td> -->
                             <td>{{ product.price }}</td>
                             <td class="text-center">

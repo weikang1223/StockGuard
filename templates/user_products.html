@@ -11,6 +11,18 @@
             <div class="d-flex justify-content-between mb-3">
                 <div class="d-flex gap-2">
                     <input type="text" id="searchInput" class="form-control w-40" placeholder="Search Products...">
+                    <select id="categoriesFilter" class="form-select w-40">
+                        <option value="">All categories</option>
+                        {% for category in categories %}
+                        <option value="{{ category.id }}">{{ category.categories_name }}</option>
+                        {% endfor %}
+                    </select>
+                    <select id="supplierFilter" class="form-select w-40">
+                        <option value="">All Supplier</option>
+                        {% for supplier in suppliers %}
+                        <option value="{{ supplier.id }}">{{ supplier.company_name }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
                 <div>
                     <!-- Stock Out Product Button -->
@@ -39,14 +51,29 @@
                     </thead>
                     <tbody>
                         {% for product in products %}
-                        <tr data-store-id="{{ product.store_id }}">
+                        <tr data-store-id="{{ product.store_id }}" data-category-id="{{ product.category_id }}"
+                        data-supplier-id="{{ product.supplier_id }}">
                             <td>{{ product.product_id }}</td>
                             <td>{{ product.product_name }}</td>
                             <td>{{ product.category_name }}</td>
                             <td>{{ product.supplier_name }}</td>
                             <td>{{ product.store_name or 'Not assigned' }}</td>
-                            <td>{{ product.quantity }}</td>
-                            <td>{{ "%.2f"|format(product.price) }}</td> 
+                            <td>
+                                <span class="
+                                    {% if product.quantity == 0 %}
+                                        text-danger fw-bold
+                                    {% elif product.quantity <= 10 %}
+                                        text-warning fw-bold
+                                    {% else %}
+                                        text-success fw-bold
+                                    {% endif %}
+                                ">
+                                    {{ product.quantity }}
+                                </span>
+                            </td>
+                            
+                       <!--     <td>{{ "%.2f"|format(product.price) }}</td> -->
+                            <td>{{ product.price }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>

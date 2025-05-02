@@ -87,20 +87,42 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Search functionality for products
-    const searchInput = document.getElementById('searchInput');
-    if (searchInput) {
-        searchInput.addEventListener('input', function () {
-            const filter = searchInput.value.toLowerCase();
-            const rows = document.querySelectorAll('#productsTable tbody tr');
-            rows.forEach((row) => {
-                const productName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
-                if (productName.indexOf(filter) > -1) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
+       // Search functionality
+       document.getElementById('searchInput').addEventListener('keyup', function() {
+        filterProducts();
+    });
+      // category filter functionality 
+    document.getElementById('categoriesFilter').addEventListener('change', function() {
+        filterProducts();
+    });
+     // supplier filter functionalitt
+     document.getElementById('supplierFilter').addEventListener('change', function() {
+        filterProducts();
+    });
+
+
+
+    // Combined search and filter function
+    function filterProducts() {
+        const searchValue = document.getElementById('searchInput').value.toLowerCase();
+        const categoryValue = document.getElementById('categoriesFilter').value;
+        const supplierValue = document.getElementById('supplierFilter').value;
+        const rows = document.querySelectorAll('#productsTable tbody tr');
+        
+        rows.forEach(row => {
+            const productName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+            const categoryId = row.dataset.categoryId;
+            const supplierId = row.dataset.supplierId;
+            
+            const matchesSearch = productName.includes(searchValue);
+            const matchesCategory = !categoryValue || categoryId === categoryValue;
+            const matchesSupplier = !supplierValue || supplierId === supplierValue;
+            
+            if (matchesSearch &&  matchesCategory && matchesSupplier) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
         });
     }
 });

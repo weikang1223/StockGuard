@@ -133,21 +133,36 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('storeFilter').addEventListener('change', function() {
         filterProducts();
     });
+    // categories filter functionality
+    document.getElementById('categoriesFilter').addEventListener('change', function() {
+        filterProducts();
+    });
+     // supplier filter functionalitt
+    document.getElementById('supplierFilter').addEventListener('change', function() {
+        filterProducts();
+    });
+
 
     // Combined search and filter function
     function filterProducts() {
         const searchValue = document.getElementById('searchInput').value.toLowerCase();
         const storeValue = document.getElementById('storeFilter').value;
+        const categoryValue = document.getElementById('categoriesFilter').value;
+        const supplierValue = document.getElementById('supplierFilter').value;
         const rows = document.querySelectorAll('#productsTable tbody tr');
         
         rows.forEach(row => {
             const productName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
             const storeId = row.dataset.storeId;
+            const categoryId = row.dataset.categoryId;
+            const supplierId = row.dataset.supplierId;
             
             const matchesSearch = productName.includes(searchValue);
             const matchesStore = !storeValue || storeId === storeValue;
+            const matchesCategory = !categoryValue || categoryId === categoryValue;
+            const matchesSupplier = !supplierValue || supplierId === supplierValue;
             
-            if (matchesSearch && matchesStore) {
+            if (matchesSearch && matchesStore && matchesCategory && matchesSupplier) {
                 row.style.display = '';
             } else {
                 row.style.display = 'none';
