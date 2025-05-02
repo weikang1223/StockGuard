@@ -68,4 +68,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     userFilter.addEventListener('input', filterTransactions);
     typeFilter.addEventListener('change', filterTransactions);
+    
+    exportProductListExcelBtn.addEventListener('click', () => {
+        const table = document.getElementById('productTable');
+        const wb = XLSX.utils.table_to_book(table, { sheet: "Manager Product List  Report" });
+
+        // Save the Excel file
+        XLSX.writeFile(wb, "Manager_Product_List_report.xlsx");
+    });
+
+    exportTransactionExcelBtn.addEventListener('click', () => {
+        const table = document.getElementById('transactionTable');
+        const wb = XLSX.utils.table_to_book(table, { sheet: "Manager Transaction Report" });
+
+        // Save the Excel file
+        XLSX.writeFile(wb, "Manager_Transaction_report.xlsx");
+    });
+    
+    
 });

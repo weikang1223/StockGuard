@@ -30,6 +30,9 @@
                         {% endfor %}
                     </select>
                 </div>  
+                <div>
+                    <button class="btn btn-primary" id="exportProductListExcelBtn">Export to Excel</button>
+                </div>
             </div>
             
             <!-- Product Table -->
@@ -73,12 +76,14 @@
                         <option value="out">Out</option>
                     </select>
                 </div>
-               
+                <div>
+                    <button class="btn btn-primary" id="exportTransactionExcelBtn">Export to Excel</button>
+                </div>
             </div>
 
             <!-- Transactions Table -->
             <div class="table-responsive">
-                <table class="table table-bordered">
+                <table class="table table-bordered" id="transactionTable">
                     <thead>
                         <tr>
                             <th>Transaction ID</th>
@@ -115,4 +120,5 @@
 
 <!-- Toggle Script -->
 <script src="{{ url_for('static', filename='js/report.js') }}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.1/xlsx.full.min.js"></script>
 {% endblock %}

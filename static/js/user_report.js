@@ -22,4 +22,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // Event listeners for filters
     productSearch.addEventListener('input', filterProducts);
     lowStockFilter.addEventListener('change', filterProducts);
+    
+    // excel functionality 
+    const exportExcelBtn = document.getElementById('exportExcelBtn');
+
+    exportExcelBtn.addEventListener('click', () => {
+        const table = document.getElementById('productTable');
+        const wb = XLSX.utils.table_to_book(table, { sheet: "User Report" });
+
+        // Save the Excel file
+        XLSX.writeFile(wb, "user_report.xlsx");
+    });
 });
