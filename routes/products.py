@@ -137,12 +137,24 @@ def init_product_routes(app):
             data = request.get_json()
             conn = database.get_connection()
             cursor = conn.cursor(dictionary=True)
-            
+
             # Start transaction
             cursor.execute('START TRANSACTION')
-            
+
+            # Get current quantity
+            cursor.execute('SELECT quantity FROM products WHERE product_id = %s', (id,))
+            product = cursor.fetchone()
+            if not product:
+                cursor.execute('ROLLBACK')
+                return jsonify({'success': False, 'message': 'Product not found'}), 404
+
+            current_quantity = product['quantity']
+            new_quantity = int(data['quantity'])
+            difference = new_quantity - current_quantity
+
             # Update products table
-            cursor.execute('''
+            cursor.execute(
+                '''
                 UPDATE products 
                 SET product_name = %s,
                     category_id = %s,
@@ -151,20 +163,36 @@ def init_product_routes(app):
                     quantity = %s,
                     price = %s
                 WHERE product_id = %s
-            ''', (
-                data['product_name'],
-                data['category_id'],
-                data['supplier_id'],
-                data['store_id'],
-                data['quantity'],
-                data['price'],
-                id
-            ))
-            
-            if cursor.rowcount == 0:
-                cursor.execute('ROLLBACK')
-                return jsonify({'success': False, 'message': 'Product not found'}), 404
-            
+                ''',
+                (
+                    data['product_name'],
+                    data['category_id'],
+                    data['supplier_id'],
+                    data['store_id'],
+                    new_quantity,
+                    data['price'],
+                    id,
+                ),
+            )
+
+            # Log transaction if quantity changed
+            if difference != 0:
+                transaction_type = 'In' if difference > 0 else 'Out'
+                cursor.execute(
+                    '''
+                    INSERT INTO product_transactions 
+                    (product_id, quantity, transaction_date, transaction_type, created_by)
+                    VALUES (%s, %s, %s, %s, %s)
+                    ''',
+                    (
+                        id,
+                        abs(difference),
+                        datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                        transaction_type,
+                        1,  # Replace with dynamic user ID if needed
+                    ),
+                )
+
             conn.commit()
             return jsonify({'success': True})
         except Exception as e:
@@ -202,7 +230,7 @@ def init_product_routes(app):
            data = request.get_json()
            product_id = data.get('product_id')
            quantity = data.get('quantity')
-           date = data.get('date')
+           date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
            
            if not all([product_id, quantity, date]):
                return jsonify({'success': False, 'message': 'Missing required fields'}), 400
