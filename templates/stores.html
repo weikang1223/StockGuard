@@ -1,40 +1,44 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container-fluid">
+<div class="container-fluid px-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 text-gray-800">Stores</h1>
-        
+        <h1 class="h3 text-primary fw-bold">🏬 Stores Overview</h1>
     </div>
 
-    <div class="card shadow mb-4">
-        <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center mb-3">  
-                <div class="d-flex gap-2">
-                    <input type="text" id="searchInput" class="form-control flex-grow-1" placeholder="Search Stores...">
-                    <select id="locationFilter" class="form-select flex-grow-1">
-                        <option value="">All Locations</option>
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-gradient-success text-white fw-semibold">
+            <i class="bi bi-shop me-2"></i> Manage Stores
+        </div>
+        <div class="card-body bg-light">
+            <!-- Search & Filter -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="d-flex flex-wrap gap-2">
+                    <input type="text" id="searchInput" class="form-control border-primary" placeholder="🔍 Search Stores...">
+                    <select id="locationFilter" class="form-select border-success">
+                        <option value="">🌍 All Locations</option>
                         {% for location in locations %}
                         <option value="{{ location }}">{{ location }}</option>
                         {% endfor %}
                     </select>
                 </div>
                 <div class="d-flex gap-2">
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addStoreModal">
+                    <button class="btn btn-success shadow-sm" data-bs-toggle="modal" data-bs-target="#addStoreModal">
                         <i class="bi bi-plus-lg"></i> Add Store
                     </button>
                 </div>
             </div>
-        </div>
+
+            <!-- Stores Table -->
             <div class="table-responsive">
-                <table class="table table-bordered" id="storesTable">
-                    <thead>
+                <table class="table table-bordered table-hover bg-white align-middle" id="storesTable">
+                    <thead class="table-success text-center">
                         <tr>
                             <th>ID</th>
                             <th>Store Name</th>
                             <th>Location</th>
                             <th>Products Count</th>
-                            <th class="text-center">Actions</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -43,20 +47,20 @@
                             <td>{{ store.store_id }}</td>
                             <td>{{ store.store_name }}</td>
                             <td>{{ store.location }}</td>
-                            <td>{{ store.product_count }}</td>
+                            <td class="text-center fw-bold">{{ store.product_count }}</td>
                             <td class="text-center">
-                                <button class="btn btn-sm btn-info view-inventory-btn" 
+                                <button class="btn btn-sm btn-outline-info view-inventory-btn" 
                                         data-id="{{ store.store_id }}">
                                     <i class="bi bi-eye"></i>
                                 </button>
-                                <button class="btn btn-sm btn-primary edit-btn" 
+                                <button class="btn btn-sm btn-outline-primary edit-btn" 
                                         data-id="{{ store.store_id }}"
                                         data-name="{{ store.store_name }}"
                                         data-location="{{ store.location }}"
                                         data-products-count="{{ store.product_count }}">
                                     <i class="bi bi-pencil"></i>
                                 </button>
-                                <button class="btn btn-sm btn-danger delete-btn" data-id="{{ store.store_id }}">
+                                <button class="btn btn-sm btn-outline-danger delete-btn" data-id="{{ store.store_id }}">
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </td>
@@ -68,7 +72,6 @@
         </div>
     </div>
 </div>
-
 <!-- Add Store Modal -->
 <div class="modal fade" id="addStoreModal" tabindex="-1">
     <div class="modal-dialog">

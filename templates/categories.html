@@ -1,24 +1,30 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container-fluid">
-    <h1 class="h3 mb-4 text-gray-800">Categories</h1>
+<div class="container-fluid px-4">
+    <h1 class="h3 mb-4 text-success fw-bold">📁 Categories</h1>
 
-    <div class="card shadow mb-4">
-        <div class="card-body">
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-gradient-info text-white fw-semibold">
+            <i class="bi bi-tags me-2"></i> Manage Categories
+        </div>
+        <div class="card-body bg-light">
+            <!-- Search and Add -->
             <div class="d-flex justify-content-between mb-3">
-                <input type="text" id="searchInput" class="form-control w-25" placeholder="Search Categories...">
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+                <input type="text" id="searchInput" class="form-control w-25 border-success shadow-sm" placeholder="🔍 Search Categories...">
+                <button class="btn btn-success shadow-sm" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
                     <i class="bi bi-plus-lg"></i> Add Category
                 </button>
             </div>
+
+            <!-- Categories Table -->
             <div class="table-responsive">
-                <table class="table table-bordered" id="categoriesTable">
-                    <thead>
+                <table class="table table-bordered table-hover bg-white align-middle" id="categoriesTable">
+                    <thead class="table-info text-center">
                         <tr>
                             <th>ID</th>
                             <th>Category Name</th>
-                            <th class="text-center" style="width: 150px;">Actions</th>
+                            <th style="width: 150px;">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -27,12 +33,12 @@
                             <td>{{ category.id }}</td>
                             <td>{{ category.categories_name }}</td>
                             <td class="text-center">
-                                <button class="btn btn-sm btn-primary edit-btn" 
+                                <button class="btn btn-sm btn-outline-primary edit-btn" 
                                         data-id="{{ category.id }}"
                                         data-name="{{ category.categories_name }}">
                                     <i class="bi bi-pencil"></i>
                                 </button>
-                                <button class="btn btn-sm btn-danger delete-btn" data-id="{{ category.id }}">
+                                <button class="btn btn-sm btn-outline-danger delete-btn" data-id="{{ category.id }}">
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </td>

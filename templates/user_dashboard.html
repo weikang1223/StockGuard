@@ -1,24 +1,25 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container-fluid">
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">Store Admin Dashboard</h1>
+<div class="container-fluid px-4">
+    <!-- Header Section -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 text-primary fw-bold">📦 Store Admin Dashboard</h1>
     </div>
 
     <!-- Summary Cards Row -->
-    <div class="row">
+    <div class="row mb-4">
         <!-- Total Products Card -->
         <div class="col-xl-4 col-md-6 mb-4">
-            <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card border-left-primary shadow-lg">
                 <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Products</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_products }}</div>
+                            <div class="h4 mb-0 font-weight-bold text-gray-800">{{ total_products }}</div>
                         </div>
-                        <div class="col-auto">
-                            <i class="bi bi-box fs-2 text-gray-300"></i>
+                        <div class="fs-1 text-gray-300">
+                            <i class="bi bi-box"></i>
                         </div>
                     </div>
                 </div>
@@ -27,15 +28,15 @@
 
         <!-- Total Value Card -->
         <div class="col-xl-4 col-md-6 mb-4">
-            <div class="card border-left-success shadow h-100 py-2">
+            <div class="card border-left-success shadow-lg">
                 <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Total Value</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">SGD {{ "%.2f"|format(total_value) }}</div>
+                            <div class="h4 mb-0 font-weight-bold text-gray-800">SGD {{ "%.2f"|format(total_value) }}</div>
                         </div>
-                        <div class="col-auto">
-                            <i class="bi bi-currency-dollar fs-2 text-gray-300"></i>
+                        <div class="fs-1 text-gray-300">
+                            <i class="bi bi-currency-dollar"></i>
                         </div>
                     </div>
                 </div>
@@ -44,15 +45,15 @@
 
         <!-- Low Stock Card -->
         <div class="col-xl-4 col-md-6 mb-4">
-            <div class="card border-left-danger shadow h-100 py-2">
+            <div class="card border-left-danger shadow-lg">
                 <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
                             <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Low Stock Products</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ low_stock }}</div>
+                            <div class="h4 mb-0 font-weight-bold text-gray-800">{{ low_stock }}</div>
                         </div>
-                        <div class="col-auto">
-                            <i class="bi bi-exclamation-triangle fs-2 text-gray-300"></i>
+                        <div class="fs-1 text-gray-300">
+                            <i class="bi bi-exclamation-triangle"></i>
                         </div>
                     </div>
                 </div>
@@ -60,17 +61,22 @@
         </div>
     </div>
 
-    <div class="row">
-        <!-- Product Quantity Overview with Filter -->
+    <!-- Product Quantity Overview with Filter -->
+    <div class="row mb-4">
         <div class="col-xl-6 col-md-6 mb-4">
-            <div class="card shadow mb-4">
-                <div class="card-header d-flex justify-content-between align-items-center py-10 h-100">
-                    <h6 class="m-0 font-weight-bold text-primary">Top 5 Products by Quantity</h6>
+            <div class="card shadow-lg">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="font-weight-bold text-primary">Top 5 Products by Quantity</h6>
+                    <select id="storeFilter" class="form-select form-select-sm">
+                        <option disabled selected>Select Store</option>
+                        {% for store in stores %}
+                            <option value="{{ store.store_id }}">{{ store.store_name | title }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
-
-                <div class="card-body py-2">
-                    <div class="text-center mb-3">
-                        <h6 id="selectedStoreName" class="text-secondary">Store: {{ store_name }}</h6>
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <h6 id="selectedStoreName" class="text-secondary">Please select a store</h6>
                     </div>
                     <div style="max-width: 800px; height: 400px; margin: auto;">
                         <canvas id="productQuantityChart"></canvas>
@@ -81,9 +87,9 @@
 
         <!-- Low Stock Items -->
         <div class="col-xl-6 col-md-6 mb-4">
-            <div class="card shadow mb-4">
+            <div class="card shadow-lg">
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary text-danger">Low Stock Products</h6>
+                    <h6 class="font-weight-bold text-danger">Low Stock Products</h6>
                 </div>
                 <div class="card-body">
                     <div style="max-width: 800px; height: 400px; margin: auto;">
@@ -94,7 +100,7 @@
         </div>
     </div>
 
-    <!-- Add this toast container -->
+    <!-- Toast Notification for Low Stock Alert -->
     <div class="toast-container position-fixed bottom-0 end-0 p-3">
         <div id="lowStockToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-header bg-warning text-dark">

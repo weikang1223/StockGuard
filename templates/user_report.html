@@ -1,57 +1,68 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container-fluid">
+<div class="container-fluid px-4">
+
+    <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 text-gray-800">User Report</h1>
+        <h1 class="h3 text-primary fw-bold">📊 User Report</h1>
     </div>
 
-    <!-- Filters and Buttons -->
-    <div class="d-flex justify-content-between mb-3">
+    <div class="d-flex justify-content-end mb-3">
         <div class="d-flex gap-2">
-            <input type="text" id="productSearch" class="form-control w-40" placeholder="Search Product Name">
-            <select id="lowStockFilter" class="form-select w-40">
+            <input type="text" id="productSearch" class="form-control shadow-sm" placeholder="Search Product Name">
+            <select id="lowStockFilter" class="form-select shadow-sm">
                 <option value="">All Stock Levels</option>
                 <option value="low">Low Stock (≤ 10)</option>
             </select>
-        </div>
-        <div>
-            <button class="btn btn-primary" id="exportExcelBtn">Export to Excel</button>
-        </div>
+        </div>   
     </div>
-
+    <div class="card-body bg-light">
+        <div class="mb-3 text-end">
+            <button class="btn btn-outline-success shadow-sm" id="exportExcelBtn">
+                <i class="bi bi-file-earmark-excel"></i> Export to Excel
+            </button>
+        </div>
     <!-- Product List Section -->
-    <div class="card shadow mb-4" id="productList">
-        <div class="card-body">
+    <div class="card shadow border-0 mb-4" id="productList">
+        <div class="card-body bg-light">
             <h4 class="mb-3">Product List</h4>
-
+    
             <!-- Product Table -->
-            <table class="table table-bordered" id="productTable">
-                <thead>
-                    <tr>
-                        <th>Product ID</th>
-                        <th>Store</th>
-                        <th>Product Name</th>
-                        <th>Quantity</th>
-                        <th>Price (SGD)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for product in products %}
-                    <tr data-name="{{ product.product_name }}" data-quantity="{{ product.quantity }}">
-                        <td>{{ product.product_id }}</td>
-                        <td>{{ product.store_name }}</td>
-                        <td>{{ product.product_name }}</td>
-                        <td>{{ product.quantity }}</td>
-                        <td>{{ product.price }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle bg-white" id="productTable">
+                    <thead class="table-primary text-center">
+                        <tr>
+                            <th>Product ID</th>
+                            <th>Store</th>
+                            <th>Product Name</th>
+                            <th>Quantity</th>
+                            <th>Price (SGD)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in products %}
+                        <tr class="text-center"
+                            data-name="{{ product.product_name }}"
+                            data-quantity="{{ product.quantity }}">
+                            <td>{{ product.product_id }}</td>
+                            <td>{{ product.store_name }}</td>
+                            <td class="text-start">{{ product.product_name }}</td>
+                            <td class="fw-bold text-center">
+                                <span class="{% if product.quantity == 0 %}text-danger{% elif product.quantity <= 10 %}text-warning{% else %}text-success{% endif %}">
+                                    {{ product.quantity }}
+                                </span>
+                            </td>
+                            <td>{{ product.price }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-</div>
-
+</div>    
+    
 <!-- Scripts for Exporting -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.1/xlsx.full.min.js"></script>
 

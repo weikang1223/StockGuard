@@ -332,9 +332,22 @@ def init_product_routes(app):
 
             cursor.execute('SELECT id, categories_name FROM categories')
             categories = cursor.fetchall()
-            
+
+            cursor.execute('''
+                 SELECT DISTINCT c.id, c.categories_name
+                FROM categories c
+                JOIN products p ON c.id = p.category_id
+                WHERE p.store_id = %s
+                
+            ''', (store_id,))
+            categories = cursor.fetchall()
             # Get suppliers
-            cursor.execute('SELECT id, company_name FROM suppliers')
+            cursor.execute('''
+                SELECT DISTINCT s.id, s.company_name
+                FROM suppliers s
+                JOIN products p ON s.id = p.supplier_id
+                WHERE p.store_id = %s
+            ''', (store_id,))
             suppliers = cursor.fetchall()
 
             return render_template(

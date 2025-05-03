@@ -1,90 +1,95 @@
 {% extends "base.html" %}
 
+{% block title %}Manager Report{% endblock %}
+
 {% block content %}
-<div class="container-fluid">
+<div class="container-fluid px-4">
+
+    <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 text-gray-800">Manager Report</h1>
-        <div>
-            <button class="btn btn-primary me-2" id="showProductsBtn">Product List</button>
-            <button class="btn btn-secondary" id="showTransactionsBtn">Product Transactions</button>
+        <h1 class="h3 text-primary fw-bold">📊 Manager Report</h1>
+        <div class="btn-group shadow-sm">
+            <button class="btn btn-primary" id="showProductsBtn"><i class="bi bi-box-seam"></i> Product List</button>
+            <button class="btn btn-outline-primary" id="showTransactionsBtn"><i class="bi bi-clock-history"></i> Product Transactions</button>
         </div>
     </div>
 
     <!-- Product List Section -->
-    <div class="card shadow mb-4" id="productList">
-        <div class="card-body">
-            <h4 class="mb-3">Product List</h4>
-
-            <!-- Filters -->
-            <div class="d-flex justify-content-between mb-3">
-                <div class="d-flex gap-2">
-                    <input type="text" id="productSearch" class="form-control w-40" placeholder="Search Product Name">
-                    <select id="lowStockFilter" class="form-select w-40">
-                        <option value="">All Stock Levels</option>
-                        <option value="low">Low Stock (≤ 10)</option>
-                    </select>
-                    <select id="stockFilter" class="form-select w-40">
-                        <option value="">Select Store</option>
-                        {% for store in stores %}
-                            <option value="{{ store.store_id }}">{{ store.store_name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>  
-                <div>
-                    <button class="btn btn-primary" id="exportProductListExcelBtn">Export to Excel</button>
-                </div>
-            </div>
-            
-            <!-- Product Table -->
-            <table class="table table-bordered" id="productTable">
-                <thead>
-                    <tr>
-                        <th>Product ID</th>
-                        <th>Store</th>
-                        <th>Product Name</th>
-                        <th>Quantity</th>
-                        <th>Price (SGD)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for product in products %}
-                    <tr data-name="{{ product.product_name }}" data-quantity="{{ product.quantity }}" data-store-id="{{ product.store_id }}">
-                        <td>{{ product.product_id }}</td>
-                        <td>{{ product.store_name }}</td>
-                        <td>{{ product.product_name }}</td>
-                        <td>{{ product.quantity }}</td>
-                        <td>{{ product.price }}</td>
-                    </tr>
+    <div class="card shadow border-0 mb-4" id="productList">
+        <div class="card-header bg-gradient-primary text-white fw-semibold d-flex justify-content-between align-items-center">
+            <span><i class="bi bi-boxes me-2"></i>All Products</span>
+            <div class="d-flex gap-2 w-50">
+                <input type="text" id="productSearch" class="form-control shadow-sm" placeholder="Search Product">
+                <select id="lowStockFilter" class="form-select shadow-sm">
+                    <option value="">All Stock Levels</option>
+                    <option value="low">Low Stock (≤ 10)</option>
+                </select>
+                <select id="stockFilter" class="form-select shadow-sm">
+                    <option value="">Select Store</option>
+                    {% for store in stores %}
+                        <option value="{{ store.store_id }}">{{ store.store_name }}</option>
                     {% endfor %}
-                </tbody>          
-            </table>
+                </select>
+            </div>
+        </div>
+        <div class="card-body bg-light">
+            <div class="mb-3 text-end">
+                <button class="btn btn-outline-success shadow-sm" id="exportProductListExcelBtn">
+                    <i class="bi bi-file-earmark-excel"></i> Export to Excel
+                </button>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle bg-white" id="productTable">
+                    <thead class="table-primary text-center">
+                        <tr>
+                            <th>Product ID</th>
+                            <th>Store</th>
+                            <th>Product Name</th>
+                            <th>Quantity</th>
+                            <th>Price (SGD)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in products %}
+                        <tr class="text-center"
+                            data-name="{{ product.product_name }}"
+                            data-quantity="{{ product.quantity }}"
+                            data-store-id="{{ product.store_id }}">
+                            <td>{{ product.product_id }}</td>
+                            <td>{{ product.store_name }}</td>
+                            <td class="text-start">{{ product.product_name }}</td>
+                            <td>{{ product.quantity }}</td>
+                            <td>{{ product.price }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
     <!-- Transaction List Section -->
-    <div class="card shadow mb-4 d-none" id="transactionList">
-        <div class="card-body">
-            <h4 class="mb-3">Product Transactions</h4>
-
-            <!-- Filters -->
-            <div class="d-flex justify-content-between mb-3" id="transactionFilters">
-                <div class="d-flex gap-2">
-                    <input type="text" id="userFilter" class="form-control w-40" placeholder="Search User">
-                    <select id="typeFilter" class="form-select w-40">
-                        <option value="">All Types</option>
-                        <option value="in">In</option>
-                        <option value="out">Out</option>
-                    </select>
-                </div>
-                <div>
-                    <button class="btn btn-primary" id="exportTransactionExcelBtn">Export to Excel</button>
-                </div>
+    <div class="card shadow border-0 d-none mb-4" id="transactionList">
+        <div class="card-header bg-gradient-primary text-white fw-semibold d-flex justify-content-between align-items-center">
+            <span><i class="bi bi-clock-history me-2"></i>Product Transactions</span>
+            <div class="d-flex gap-2 w-50">
+                <input type="text" id="userFilter" class="form-control shadow-sm" placeholder="Search User">
+                <select id="typeFilter" class="form-select shadow-sm">
+                    <option value="">All Types</option>
+                    <option value="in">In</option>
+                    <option value="out">Out</option>
+                </select>
             </div>
-
-            <!-- Transactions Table -->
+        </div>
+        <div class="card-body bg-light">
+            <div class="mb-3 text-end">
+                <button class="btn btn-outline-success shadow-sm" id="exportTransactionExcelBtn">
+                    <i class="bi bi-file-earmark-excel"></i> Export to Excel
+                </button>
+            </div>
             <div class="table-responsive">
-                <table class="table table-bordered" id="transactionTable">
-                    <thead>
+                <table class="table table-bordered table-hover align-middle bg-white" id="transactionTable">
+                    <thead class="table-primary text-center">
                         <tr>
                             <th>Transaction ID</th>
                             <th>Product Name</th>
@@ -96,16 +101,18 @@
                     </thead>
                     <tbody>
                         {% for transaction in transactions %}
-                        <tr data-type="{{ transaction.transaction_type }}" data-user="{{ transaction.username }}">
+                        <tr class="text-center"
+                            data-type="{{ transaction.transaction_type }}"
+                            data-user="{{ transaction.username }}">
                             <td>{{ transaction.transaction_id }}</td>
-                            <td>{{ transaction.product_name }}</td>
+                            <td class="text-start">{{ transaction.product_name }}</td>
                             <td>{{ transaction.quantity }}</td>
                             <td>{{ transaction.transaction_date }}</td>
                             <td>
                                 {% if transaction.transaction_type == 'in' %}
-                                  <span class="badge bg-success fs-8"><i class="fas fa-plus-circle"></i> In</span>
+                                    <span class="badge bg-success px-3 py-2"><i class="fas fa-arrow-down"></i> In</span>
                                 {% else %}
-                                  <span class="badge bg-danger fs-8"><i class="fas fa-minus-circle"></i> Out</span>
+                                    <span class="badge bg-danger px-3 py-2"><i class="fas fa-arrow-up"></i> Out</span>
                                 {% endif %}
                             </td>
                             <td>{{ transaction.username }}</td>

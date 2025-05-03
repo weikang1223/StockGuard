@@ -1,68 +1,77 @@
 {% extends "base.html" %}
 
+{% block title %}Transaction History{% endblock %}
+
 {% block content %}
-<div class="container-fluid">
+<div class="container-fluid px-4">
+    <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 text-gray-800">Transaction History</h1>
-        <a href="{{ url_for('products') }}" class="btn btn-secondary">
+        <h1 class="h3 text-primary fw-bold">📦 Transaction History</h1>
+        <a href="{{ url_for('products') }}" class="btn btn-outline-secondary shadow-sm">
             <i class="bi bi-arrow-left"></i> Back to Products
         </a>
     </div>
-    
-    <div class="card-header py-3 d-flex justify-content-between align-items-center">
-        <h6 class="m-0 font-weight-bold text-primary">All Transactions</h6>
-        <div class="d-flex gap-2 w-50">
-            <select id="transactionFilter" class="form-select">
-                <option value="">All Transactions</option>
-                <option value="in">In</option>
-                <option value="out">Out</option>
-            </select>
-            <select id="createdByFilter" class="form-select">
-                <option value="">All Users</option>
-                {% for transaction in transactions|unique(attribute='created_by') %}
-                    <option value="{{ transaction.created_by }}">{{ transaction.created_by }}</option>
-                {% endfor %}
-            </select>
-        </div>
-    </div>
-    
-    <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-bordered" id="transactionsTable" width="100%" cellspacing="0">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Product</th>
-                        <th>Quantity</th>
-                        <th>Date</th>
-                        <th>Transaction Type</th>
-                        <th>Created By</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for transaction in transactions %}
-                    <tr class="transaction-row" data-transaction-type="{{ transaction.transaction_type }}" data-created-by="{{ transaction.created_by }}">
-                        <td>{{ transaction.transaction_id }}</td>
-                        <td>{{ transaction.product_name }}</td>
-                        <td>{{ transaction.quantity }}</td>
-                        <td>{{ transaction.transaction_date }}</td>
-                        <td>
-                            {% if transaction.transaction_type == 'in' %}
-                              <span class="badge bg-success fs-8"><i class="fas fa-plus-circle"></i> In</span>
-                            {% else %}
-                              <span class="badge bg-danger fs-8"><i class="fas fa-minus-circle"></i> Out</span>
-                            {% endif %}
-                        </td>
-                        <td>{{ transaction.created_by }}</td>
-                    </tr>
+
+    <!-- Filters -->
+    <div class="card shadow border-0 mb-4">
+        <div class="card-header bg-gradient-primary text-white fw-semibold d-flex justify-content-between align-items-center">
+            <span><i class="bi bi-clock-history me-2"></i>All Transactions</span>
+            <div class="d-flex gap-2 w-50">
+                <select id="transactionFilter" class="form-select shadow-sm">
+                    <option value="">All Transactions</option>
+                    <option value="in">In</option>
+                    <option value="out">Out</option>
+                </select>
+                <select id="createdByFilter" class="form-select shadow-sm">
+                    <option value="">All Users</option>
+                    {% for transaction in transactions|unique(attribute='created_by') %}
+                        <option value="{{ transaction.created_by }}">{{ transaction.created_by }}</option>
                     {% endfor %}
-                </tbody>
-            </table>
+                </select>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="card-body bg-light">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle bg-white" id="transactionsTable">
+                    <thead class="table-primary text-center">
+                        <tr>
+                            <th>ID</th>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Created By</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for transaction in transactions %}
+                        <tr class="transaction-row text-center"
+                            data-transaction-type="{{ transaction.transaction_type }}"
+                            data-created-by="{{ transaction.created_by }}">
+                            <td>{{ transaction.transaction_id }}</td>
+                            <td class="text-start">{{ transaction.product_name }}</td>
+                            <td>{{ transaction.quantity }}</td>
+                            <td>{{ transaction.transaction_date }}</td>
+                            <td>
+                                {% if transaction.transaction_type == 'in' %}
+                                    <span class="badge bg-success px-3 py-2"><i class="fas fa-arrow-down"></i> In</span>
+                                {% else %}
+                                    <span class="badge bg-danger px-3 py-2"><i class="fas fa-arrow-up"></i> Out</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ transaction.created_by }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
-{% endblock %}
 
+{% endblock %}
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/transactions.js') }}"></script>
 {% endblock %}

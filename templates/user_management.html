@@ -1,42 +1,50 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container">
-    <h1 class="h3 mb-4 text-gray-800">User Management</h1>
+<div class="container-fluid px-4">
+    <h1 class="h3 mb-4 text-primary fw-bold">👥 User Management</h1>
 
-    <div class="card shadow mb-4">
-        <div class="card-body">
-        
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Username</th>
-                        <th>Role</th>
-                        <th>Store</th>
-                        <th class="text-center" style="width: 150px;">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for user in users %}
-                    <tr>
-                        <td>{{ user.id }}</td>
-                        <td>{{ user.username }}</td>
-                        <td>{{ user.role }}</td>
-                        <td>{{ user.store_name or 'None' }}</td>
-                        <td class="text-center">
-                            <button class="btn btn-sm btn-primary edit-btn"
-                                    data-id="{{ user.id }}"
-                                    data-username="{{ user.username }}"
-                                    data-role="{{ user.role }}"
-                                    data-store-id="{{ user.store_id }}">
-                                <i class="bi bi-pencil"></i>
-                            </button>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-gradient-primary text-white fw-semibold d-flex justify-content-between align-items-center">
+            <span><i class="bi bi-person-fill me-2"></i>Manage Users</span>
+        </div>
+        <div class="card-body bg-light">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle bg-white" id="usersTable">
+                    <thead class="table-primary text-center">
+                        <tr>
+                            <th>ID</th>
+                            <th>Username</th>
+                            <th>Role</th>
+                            <th>Store</th>
+                            <th style="width: 150px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr class="text-center">
+                            <td>{{ user.id }}</td>
+                            <td class="text-start">{{ user.username }}</td>
+                            <td>{{ user.role | title }}</td>
+                            <td>{{ user.store_name or 'None' }}</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary me-1 edit-btn"
+                                        data-id="{{ user.id }}"
+                                        data-username="{{ user.username }}"
+                                        data-role="{{ user.role }}"
+                                        data-store-id="{{ user.store_id }}">
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger delete-btn {% if user_role != 'manager' %}disabled{% endif %}" 
+                                {% if user_role != 'manager' %}disabled{% endif %} data-id="{{ user.id }}">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
