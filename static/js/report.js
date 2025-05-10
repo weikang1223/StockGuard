@@ -19,25 +19,39 @@ document.addEventListener('DOMContentLoaded', () => {
     const productSearch = document.getElementById('productSearch');
     const lowStockFilter = document.getElementById('lowStockFilter');
     const stockFilter = document.getElementById('stockFilter');
+    const categoriesFilter = document.getElementById('categoriesFilter');
+
     const productRows = document.querySelectorAll('#productTable tbody tr');
+
 
     // Function to filter products based on filters
     function filterProducts() {
         const search = productSearch.value.toLowerCase();
-        const lowStock = lowStockFilter.value === 'low';
+        const stockFilterValue = lowStockFilter.value;
         const selectedStore = stockFilter.value;
-
+        const selectedCategory = categoriesFilter.value;
+    
         productRows.forEach(row => {
             const name = row.getAttribute('data-name').toLowerCase();
             const quantity = parseInt(row.getAttribute('data-quantity'), 10);
             const storeId = row.getAttribute('data-store-id');
-
+            const categoryId = row.getAttribute('data-category-id');
+    
             const matchesName = name.includes(search);
-            const matchesStock = !lowStock || quantity <= 10;
             const matchesStore = !selectedStore || storeId === selectedStore;
-
-            // Show or hide the row based on the filters
-            row.style.display = matchesName && matchesStock && matchesStore ? '' : 'none';
+            const matchesCategory = !selectedCategory || categoryId === selectedCategory;
+    
+            let matchesStock = true;
+            if (stockFilterValue === 'low') {
+                matchesStock = quantity <= 10;
+            } else if (stockFilterValue === 'middle') {
+                matchesStock = quantity > 10 && quantity <= 100; 
+            } else if (stockFilterValue === 'high') {
+                matchesStock = quantity > 100; 
+            }
+            
+            row.style.display = matchesName && matchesStock && matchesStore && matchesCategory ? '' : 'none';
+            
         });
     }
 
@@ -45,6 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
     productSearch.addEventListener('input', filterProducts);
     lowStockFilter.addEventListener('change', filterProducts);
     stockFilter.addEventListener('change', filterProducts);
+    categoriesFilter.addEventListener('change',filterProducts);
 
     // Transaction filters
     const userFilter = document.getElementById('userFilter');

@@ -174,7 +174,7 @@ def init_product_routes(app):
                     id,
                 ),
             )
-
+            print(data)
             # Log transaction if quantity changed
             if difference != 0:
                 transaction_type = 'In' if difference > 0 else 'Out'

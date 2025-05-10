@@ -19,9 +19,12 @@ def init_report_routes(app):
                p.quantity,
                p.price,
                s.store_name,
-               p.store_id
+               p.store_id,
+               c.categories_name,
+               p.category_id
            FROM products p
            JOIN stores s ON p.store_id = s.store_id
+           LEFT JOIN categories c ON p.category_id = c.id
        ''')
        products = cursor.fetchall()
 
@@ -67,12 +70,16 @@ def init_report_routes(app):
        stores = cursor.fetchall()
 
        username = session.get('username')
+       
+       # filter for categories
+       cursor.execute('SELECT id, categories_name FROM categories')
+       categories = cursor.fetchall()
 
        cursor.close()
        conn.close()
 
        # Rendering the report page with filtered products and transactions
-       return render_template('report.html', products=products, transactions=transactions, stores=stores, username=username)
+       return render_template('report.html', products=products, transactions=transactions, stores=stores, username=username,categories=categories)
    
 
    @app.route('/user_report')
