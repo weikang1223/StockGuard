@@ -1,5 +1,6 @@
-from flask import render_template, jsonify, request,session,redirect, url_for
+from flask import render_template, jsonify, request,session,redirect, url_for,Response,json
 from database import database
+from decimal import Decimal
 
 def init_supplier_routes(app):
     @app.route('/suppliers')
@@ -107,6 +108,49 @@ def init_supplier_routes(app):
         finally:
             cursor.close()
             conn.close() 
+
+    @app.route('/suppliers/<int:id>', methods=['GET'])
+    def get_supplier_inventory(id):
+        if session.get('role') != 'manager':
+            return redirect(url_for('user_suppliers'))
+        try:
+            conn = database.get_connection()
+            cursor = conn.cursor(dictionary=True)
+
+            # The SQL query
+            cursor.execute('''
+                SELECT 
+                    s.store_name,
+                    p.product_name,
+                    p.quantity,
+                    p.price
+                FROM 
+                    products p
+                JOIN 
+                    stores s ON p.store_id = s.store_id
+                JOIN 
+                    suppliers sp ON p.supplier_id = sp.id
+                WHERE 
+                    sp.id = %s
+            ''', (id,))
+
+            products = cursor.fetchall()
+
+            # Convert Decimal to float for price or quantity if needed
+            def default_serializer(obj):
+                if isinstance(obj, Decimal):
+                    return float(obj)
+                raise TypeError
+
+            return Response(json.dumps(products, default=default_serializer), mimetype='application/json')
+
+        except Exception as e:
+            print(f"Error retrieving inventory for supplier {id}: {str(e)}")
+            return jsonify({'error': str(e)}), 500
+
+        finally:
+            cursor.close()
+            conn.close()
 
 
 

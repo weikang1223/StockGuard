@@ -43,6 +43,10 @@
                             <td>{{ supplier.email }}</td>
                             <td>{{ supplier.address }}</td>               
                             <td class="text-center">
+                                <button class="btn btn-sm btn-outline-info view-inventory-btn" 
+                                data-id="{{ supplier.id }}">
+                            <i class="bi bi-eye"></i>
+                              </button>
                                 <button class="btn btn-sm btn-outline-primary edit-btn" 
                                         data-id="{{ supplier.id }}"
                                         data-name="{{ supplier.company_name }}"
@@ -160,6 +164,37 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 <button type="button" class="btn btn-danger" id="confirmDeleteSupplier">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- View Inventory Modal -->
+<div class="modal fade" id="viewInventoryModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Product</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Store Name</th>
+                                <th>Product Name</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventoryTableBody">
+                            <!-- Products will be inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>

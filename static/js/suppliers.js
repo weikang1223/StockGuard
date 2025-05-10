@@ -130,4 +130,60 @@ document.addEventListener('DOMContentLoaded', function() {
             row.style.display = text.includes(searchTerm) ? '' : 'none';
         });
     });
+
+    const viewInventoryButtons = document.querySelectorAll('.view-inventory-btn');
+
+    viewInventoryButtons.forEach(button => {
+        button.addEventListener('click', async () => {
+            const supplierId = button.getAttribute('data-id');
+            try {
+                const response = await fetch(`/suppliers/${supplierId}`);
+                const products = await response.json();
+    
+                const inventoryTableBody = document.getElementById('inventoryTableBody');
+                inventoryTableBody.innerHTML = ''; // Clear previous data
+    
+                if (Array.isArray(products) && products.length > 0) {
+                    products.forEach(product => {
+                        const quantity = product.quantity;
+                        let quantityClass = '';
+                    
+                        if (quantity === 0 || quantity === null || quantity === undefined) {
+                            quantityClass = 'text-danger'; // red
+                        } else if (quantity <= 10) {
+                            quantityClass = 'text-warning'; // yellow
+                        } else if (quantity > 10 && quantity <= 50) {
+                            quantityClass = 'text-primary'; // blue (medium level)
+                        } else if (quantity > 50 && quantity <= 100) {
+                            quantityClass = 'text-info'; // light blue
+                        } else if (quantity > 100) {
+                            quantityClass = 'text-success'; // green
+                        }
+                    
+                        inventoryTableBody.innerHTML += `
+                            <tr>
+                                <td>${product.store_name}</td>
+                                <td>${product.product_name}</td>
+                                <td class="${quantityClass}">${quantity !== null && quantity !== undefined ? quantity : '0'}</td>
+                                <td>$${parseFloat(product.price).toFixed(2)}</td>
+                            </tr>
+                        `;
+                    });
+                } else {
+                    inventoryTableBody.innerHTML = `
+                        <tr>
+                            <td colspan="4" class="text-center">No products found for this supplier</td>
+                        </tr>
+                    `;
+                }
+    
+                const inventoryModal = new bootstrap.Modal(document.getElementById('viewInventoryModal'));
+                inventoryModal.show();
+    
+            } catch (error) {
+                console.error('Error loading supplier inventory:', error);
+                alert('Failed to load inventory. Please try again.');
+            }
+        });
+    });
 }); 
