@@ -1,11 +1,14 @@
 from flask import Flask, render_template, jsonify, request,session,redirect,url_for
 from database import database
+from werkzeug.security import generate_password_hash
+
 
 app = Flask(__name__)
 
 def init_user_routes(app):
     @app.route('/users')
     def users():
+        user_id = session.get('user_id')
         try:
             conn = database.get_connection()
             cursor = conn.cursor(dictionary=True)
@@ -40,13 +43,15 @@ def init_user_routes(app):
             conn = database.get_connection()
             cursor = conn.cursor(dictionary=True)
 
+            hashed_password = generate_password_hash(data['password'])
+
             cursor.execute(''' 
                 INSERT INTO users (id, username, password, role, store_id) 
                 VALUES (%s, %s, %s, %s, %s)
             ''', (
                 data['id'],
                 data['username'],
-                data['password'],  # Consider hashing the password in production
+                hashed_password,  # Consider hashing the password in production
                 data['role'],
                 data['store_id'] if 'store_id' in data else None
             ))
@@ -67,12 +72,37 @@ def init_user_routes(app):
             conn = database.get_connection()
             cursor = conn.cursor(dictionary=True)
 
-            role = data['role']
             username = data['username']
-            password = data['password']
-            store_id = data.get('store_id') 
 
-            # ✅ Update the user
+            # Fetch existing user
+            cursor.execute('SELECT * FROM users WHERE id = %s', (id,))
+            user = cursor.fetchone()
+            if not user:
+                return jsonify({'success': False, 'message': 'User not found'}), 404
+            
+
+            cursor.execute('''
+            SELECT users.id, users.username, users.role, users.store_id, stores.store_name
+            FROM users
+            LEFT JOIN stores ON users.store_id = stores.store_id
+            ORDER BY users.id ASC
+        ''')
+            
+            cursor.fetchall()
+
+            
+            # Password update check
+            hashed_password = (
+                generate_password_hash(data['password'])
+                if data.get('password')
+                else user['password']
+            )
+
+            # Store ID and Role update check
+            store_id = data.get('store_id', user['store_id'])
+            role = data.get('role', user['role'])
+
+            # Update query
             cursor.execute(
                 '''
                 UPDATE users
@@ -82,10 +112,8 @@ def init_user_routes(app):
                     store_id = %s
                 WHERE id = %s
                 ''',
-                (username, password, role, store_id, id),
+                (username, hashed_password, role, store_id, id),
             )
-
-            print(username,password,role,store_id,id)
 
             if cursor.rowcount == 0:
                 return jsonify({'success': False, 'message': 'User not found'}), 404
@@ -95,7 +123,7 @@ def init_user_routes(app):
 
         except Exception as e:
             print(f"Error updating user: {str(e)}")
-            return jsonify({'success': False, 'message': str(e)}), 500
+            return jsonify({'success': False, 'message': "Unable to update user"}), 500
 
         finally:
             cursor.close()
@@ -163,8 +191,18 @@ def init_user_routes(app):
             conn = database.get_connection()
             cursor = conn.cursor(dictionary=True)
 
-          #  store_id = data['store_id'] if data['role'] == 'store_admin' else None
-  
+            # If password is provided, hash it; otherwise, keep the existing password
+            hashed_password = (
+                generate_password_hash(data['password'])
+                if data.get('password')
+                else user['password']
+            )
+
+            cursor.execute('SELECT * FROM users WHERE id = %s', (id,))
+            user = cursor.fetchone()
+            if not user:
+                return jsonify({'success': False, 'message': 'User not found'}), 404
+
             cursor.execute(
                 '''
                 UPDATE users 
@@ -174,13 +212,13 @@ def init_user_routes(app):
                 ''',
                 (
                     data['username'],
-                    data['password'],
+                    hashed_password,
                     id
                 )
             )
 
             if cursor.rowcount == 0:
-                return jsonify({'success': False, 'message': 'User not found'}),
+                return jsonify({'success': False, 'message': 'User not found'}), 404
 
             conn.commit()
             return jsonify({'success': True})

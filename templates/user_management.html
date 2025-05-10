@@ -30,13 +30,12 @@
                             <td>
                                 <button class="btn btn-sm btn-outline-primary me-1 edit-btn"
                                         data-id="{{ user.id }}"
-                                        data-username="{{ user.username }}"
-                                        data-role="{{ user.role }}"
-                                        data-store-id="{{ user.store_id }}">
+                                        data-username="{{ user.username }}">
                                     <i class="bi bi-pencil-square"></i>
                                 </button>
                                 <button class="btn btn-sm btn-danger delete-btn {% if user_role != 'manager' %}disabled{% endif %}" 
-                                {% if user_role != 'manager' %}disabled{% endif %} data-id="{{ user.id }}">
+                                {% if user_role != 'manager' %}disabled{% endif %}
+                                data-id="{{ user.id }}">
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </td>
@@ -66,7 +65,8 @@
                     </div>
                     <div class="mb-3">
                         <label for="editPassword" class="form-label">Password</label>
-                        <input type="password" id="editPassword" class="form-control" required>
+                        <input type="password" id="editPassword" class="form-control">
+                        <div class="form-text">Please enter your new password.</div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

@@ -96,7 +96,9 @@
                             {% endfor %}
                         </select>
                     </div>
+                    <div class="modal-footer">
                     <button type="submit" class="btn btn-primary">Add User</button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -135,15 +137,16 @@
                     <input type="hidden" id="editUserId">
                     <div class="mb-3">
                         <label for="editUsername" class="form-label">Username</label>
-                        <input type="text" id="editUsername" class="form-control" required>
+                        <input type="text" id="editUsername" class="form-control">
                     </div>
                     <div class="mb-3">
                         <label for="editPassword" class="form-label">Password</label>
-                        <input type="password" id="editPassword" class="form-control" required>
+                        <input type="password" id="editPassword" class="form-control" >
+                        <div class="form-text">Leave blank to keep the current password.</div>
                     </div>
                     <div class="mb-3">
                         <label for="editRole" class="form-label">Role</label>
-                        <select id="editRole" class="form-select" required>
+                        <select id="editRole" class="form-select" >
                             <option value="">Select Role</option>
                             {% for role in roles %}
                                 <option value="{{ role }}">{{ role | capitalize }}</option>
@@ -152,7 +155,8 @@
                     </div>               
                     <div class="mb-3" id="store_id_div">
                         <label for="editStoreId" class="form-label">Store</label>
-                        <select id="editStoreId" class="form-select" required>
+                        <select id="editStoreId" class="form-select">
+                            <option value="">Select Store</option>
                             {% for store in stores %}
                             <option value="{{ store.store_id }}">{{ store.store_name }}</option>
                             {% endfor %}

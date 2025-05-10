@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // Populate the modal form
             document.getElementById('editUserId').value = userId;
             document.getElementById('editUsername').value = username;
-            document.getElementById('editPassword').value = ''; 
+            document.getElementById('editPassword').value = ''; // Clear password field for safety
 
             editUserModal.show();
         });
