@@ -42,19 +42,26 @@ document.addEventListener('DOMContentLoaded', () => {
             const matchesCategory = !selectedCategory || categoryId === selectedCategory;
     
             let matchesStock = true;
-            if (stockFilterValue === 'low') {
-                matchesStock = quantity <= 10;
-            } else if (stockFilterValue === 'middle') {
-                matchesStock = quantity > 10 && quantity <= 100; 
+
+            if(stockFilterValue ==='out_of_stock'){
+                matchesStock = quantity === 0;
+            }  else if (stockFilterValue === 'very_low') {
+                matchesStock = quantity >= 1 && quantity < 10;
+            } else if (stockFilterValue === 'low') {
+                matchesStock = quantity >= 10 && quantity < 40;
+            } else if (stockFilterValue === 'medium') {
+                matchesStock = quantity >= 40 && quantity < 70;
             } else if (stockFilterValue === 'high') {
-                matchesStock = quantity > 100; 
-            }
+                matchesStock = quantity >= 70 && quantity < 100;
+            } else if (stockFilterValue === 'very_high') {
+                matchesStock = quantity >= 100;
+            }            
             
             row.style.display = matchesName && matchesStock && matchesStore && matchesCategory ? '' : 'none';
             
         });
     }
-
+    
     // Event listeners for the filters
     productSearch.addEventListener('input', filterProducts);
     lowStockFilter.addEventListener('change', filterProducts);
@@ -64,25 +71,31 @@ document.addEventListener('DOMContentLoaded', () => {
     // Transaction filters
     const userFilter = document.getElementById('userFilter');
     const typeFilter = document.getElementById('typeFilter');
+    const productFilter = document.getElementById('productFilter');
     const transactionRows = document.querySelectorAll('#transactionList tbody tr');
 
     function filterTransactions() {
         const userText = userFilter.value.toLowerCase();
+        const productText = productFilter.value.toLowerCase();
         const type = typeFilter.value;
 
         transactionRows.forEach(row => {
             const username = row.getAttribute('data-user').toLowerCase();
+            const productName = row.querySelector('td:nth-child(2)').textContent.toLowerCase(); 
             const txType = row.getAttribute('data-type');
 
             const matchesUser = username.includes(userText);
+            const matchesProduct = productName.includes(productText);
             const matchesType = !type || type === txType;
 
-            row.style.display = matchesUser && matchesType ? '' : 'none';
+            row.style.display = matchesUser && matchesProduct && matchesType ? '' : 'none';
         });
     }
 
     userFilter.addEventListener('input', filterTransactions);
     typeFilter.addEventListener('change', filterTransactions);
+    productFilter.addEventListener('input', filterTransactions);
+
     
     exportProductListExcelBtn.addEventListener('click', () => {
         const table = document.getElementById('productTable');

@@ -119,44 +119,62 @@ document.addEventListener('DOMContentLoaded', function() {
     // View inventory buttons
     const viewInventoryButtons = document.querySelectorAll('.view-inventory-btn');
 
-    viewInventoryButtons.forEach((button) => {
-        button.addEventListener('click', async () => {
-            const storeId = button.dataset.id; 
-            try {
-                const response = await fetch(`/stores/${storeId}/products`);
-                const products = await response.json();
+viewInventoryButtons.forEach((button) => {
+    button.addEventListener('click', async () => {
+        const storeId = button.dataset.id; 
+        try {
+            const response = await fetch(`/stores/${storeId}/products`);
+            const products = await response.json();
 
-                const inventoryTableBody = document.getElementById('inventoryTableBody');
-                inventoryTableBody.innerHTML = ''; // Clear previous products
+            const inventoryTableBody = document.getElementById('inventoryTableBody');
+            inventoryTableBody.innerHTML = ''; // Clear previous products
 
-                if (Array.isArray(products) && products.length > 0) {
-                    products.forEach((product) => {
-                        inventoryTableBody.innerHTML += `
-                            <tr>
-                                <td>${product.product_name}</td>
-                                <td>${product.quantity}</td>
-                                <td>${product.categories_name || 'N/A'}</td>
-                                <td>$${product.price ? product.price.toFixed(2) : 'N/A'}</td>
-                            </tr>
-                        `;
-                    });
-                } else {
-                    inventoryTableBody.innerHTML = `
+            if (Array.isArray(products) && products.length > 0) {
+                products.forEach((product) => {
+                    const quantity = product.quantity;
+                    let quantityClass = '';
+                    
+                    if (quantity === 0 || quantity === null || quantity === undefined) {
+                        quantityClass = 'text-danger font-weight-bold'; // red (out of stock)
+                    } else if (quantity < 10) {
+                        quantityClass = 'text-danger font-weight-bold'; // red (very low)
+                    } else if (quantity >= 10 && quantity < 40) {
+                        quantityClass = 'text-warning font-weight-bold'; // yellow (low)
+                    } else if (quantity >= 40 && quantity < 70) {
+                        quantityClass = 'text-info font-weight-bold'; // blue (medium)
+                    } else if (quantity >= 70 && quantity < 100) {
+                        quantityClass = 'text-primary font-weight-bold'; // primary (high)
+                    } else {
+                        quantityClass = 'text-success font-weight-bold' ; // green (very high)
+                    }
+                    
+                    inventoryTableBody.innerHTML += `
                         <tr>
-                            <td colspan="4" class="text-center">No products in this store</td>
+                            <td>${product.product_name}</td>
+                            <td class="${quantityClass}">${product.quantity}</td> <!-- Apply quantityClass here -->
+                            <td>${product.categories_name || 'N/A'}</td>
+                            <td>$${product.price ? product.price.toFixed(2) : 'N/A'}</td>
                         </tr>
                     `;
-                }
-
-                // Show the inventory modal
-                const viewInventoryModal = new bootstrap.Modal(document.getElementById('viewInventoryModal'));
-                viewInventoryModal.show();
-            } catch (error) {
-                console.error('Error fetching store inventory:', error);
-                alert('Error loading store inventory');
+                });
+            } else {
+                inventoryTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="text-center">No products in this store</td>
+                    </tr>
+                `;
             }
-        });
+
+            // Show the inventory modal
+            const viewInventoryModal = new bootstrap.Modal(document.getElementById('viewInventoryModal'));
+            viewInventoryModal.show();
+        } catch (error) {
+            console.error('Error fetching store inventory:', error);
+            alert('Error loading store inventory');
+        }
     });
+});
+
 
     // Search and filter functionality
     const searchInput = document.getElementById('searchInput');

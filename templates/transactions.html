@@ -6,7 +6,7 @@
 <div class="container-fluid px-4">
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 text-primary fw-bold">📦 Transaction History</h1>
+        <h1 class="h3 text-primary fw-bold">🔄 Transaction History</h1>
         <a href="{{ url_for('products') }}" class="btn btn-outline-secondary shadow-sm">
             <i class="bi bi-arrow-left"></i> Back to Products
         </a>
@@ -18,12 +18,12 @@
             <span><i class="bi bi-clock-history me-2"></i>All Transactions</span>
             <div class="d-flex gap-2 w-50">
                 <select id="transactionFilter" class="form-select shadow-sm">
-                    <option value="">All Transactions</option>
-                    <option value="in">In</option>
-                    <option value="out">Out</option>
+                    <option value="">🔄 All Transactions</option>
+                    <option value="in">🟢 In</option>
+                    <option value="out"> 🔴 Out</option>
                 </select>
                 <select id="createdByFilter" class="form-select shadow-sm">
-                    <option value="">All Users</option>
+                    <option value="">👤 All Users</option>
                     {% for transaction in transactions|unique(attribute='created_by') %}
                         <option value="{{ transaction.created_by }}">{{ transaction.created_by }}</option>
                     {% endfor %}

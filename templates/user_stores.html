@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container-fluid px-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 text-primary fw-bold">🏬 Stores</h1>
+        <h1 class="h3 text-primary fw-bold">🏪 Stores</h1>
     </div>
 
     <div class="card shadow-lg border-0">
@@ -26,11 +26,13 @@
                             data-bs-toggle="modal" data-bs-target="#addStoreModal">
                         <i class="bi bi-plus-lg"></i> Add Store
                     </button>
-                    <button class="btn btn-success {% if user_role != 'manager' %}disabled{% endif %}" 
+                    <!-- transfer store between mulitple store -->
+                  <!--  <button class="btn btn-success {% if user_role != 'manager' %}disabled{% endif %}" 
                             {% if user_role != 'manager' %}disabled{% endif %}
                             data-bs-toggle="modal" data-bs-target="#transferModal">
-                        <i class="bi bi-arrow-left-right"></i> Transfer Products
-                    </button>
+                        <i class="bi bi-arrow-left-right"></i> Transfer Products 
+                    </button> -->
+
                 </div>
             </div>
 

@@ -10,11 +10,16 @@
 
     <div class="d-flex justify-content-end mb-3">
         <div class="d-flex gap-2">
-            <input type="text" id="productSearch" class="form-control shadow-sm" placeholder="Search Product Name">
+            <input type="text" id="productSearch" class="form-control shadow-sm" placeholder="🔍 Search Product...">
             <select id="lowStockFilter" class="form-select shadow-sm">
-                <option value="">All Stock Levels</option>
-                <option value="low">Low Stock (≤ 10)</option>
-            </select>
+                <option value="">📊 All Stock Levels</option>
+                    <option value="out_of_stock" class="text-danger">Out of Stock</option>
+                    <option value="very_low" class="text-danger"> Very Low (< 10)</option>
+                    <option value="low" class="text-warning"> Low (10–39)</option>
+                    <option value="medium" class="text-info"> Medium (40–69)</option>
+                    <option value="high" class="text-primary"> High (70–99)</option>
+                    <option value="very_high" class="text-success"> Very High (≥ 100)</option>
+            </select>  
         </div>   
     </div>
     <div class="card-body bg-light">
@@ -49,10 +54,21 @@
                             <td>{{ product.store_name }}</td>
                             <td class="text-start">{{ product.product_name }}</td>
                             <td class="fw-bold text-center">
-                                <span class="{% if product.quantity == 0 %}text-danger{% elif product.quantity <= 10 %}text-warning{% else %}text-success{% endif %}">
-                                    {{ product.quantity }}
-                                </span>
-                            </td>
+                                {% set qty = product.quantity %}
+                                {% if qty == 0 %}
+                                    <span class="text-danger">❌ {{ qty }} </span>
+                                {% elif qty < 10 %}
+                                    <span class="text-danger"> {{ qty }} </span>
+                                {% elif qty < 40 %}
+                                    <span class="text-warning"> {{ qty }} </span>
+                                {% elif qty < 70 %}
+                                    <span class="text-info"> {{ qty }} </span>
+                                {% elif qty < 100 %}
+                                    <span class="text-primary"> {{ qty }} </span>
+                                {% else %}
+                                    <span class="text-success"> {{ qty }} </span>
+                                {% endif %}
+                            </td>   
                             <td>{{ product.price }}</td>
                         </tr>
                         {% endfor %}

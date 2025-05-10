@@ -111,7 +111,8 @@ def init_dashboard_routes(app):
         cursor = conn.cursor(dictionary=True)
 
         cursor.execute('SELECT store_name FROM stores WHERE store_id = %s', (store_id,))
-        store_data = cursor.fetchone()
+        store_row = cursor.fetchone()
+        store_name = store_row['store_name'] if store_row else 'Unknown Store'
 
         cursor.execute('SELECT COUNT(*) as total_products FROM products WHERE store_id = %s', (store_id,))
         total_products = cursor.fetchone()['total_products']
@@ -133,7 +134,7 @@ def init_dashboard_routes(app):
         username = session.get('username')
 
         return render_template('user_dashboard.html',
-                               store_data=store_data,
+                               store_name = store_name,
                                total_products=total_products,
                                total_value=total_value,
                                low_stock=low_stock,

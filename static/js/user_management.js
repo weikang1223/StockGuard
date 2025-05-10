@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 alert('User updated successfully.');
                 window.location.reload(); // Refresh the page to reflect changes
             } else {
-                alert('Error: ' + result.message);
+                alert('Error: ' + 'Please enter your new password');
             }
         } catch (error) {
             console.error('Request failed', error);

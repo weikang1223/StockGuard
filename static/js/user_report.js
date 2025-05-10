@@ -6,14 +6,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function filterProducts() {
         const search = productSearch.value.toLowerCase();
-        const lowStock = lowStockFilter.value === 'low';
+        const stockFilterValue = lowStockFilter.value;
 
         productRows.forEach(row => {
             const name = row.getAttribute('data-name').toLowerCase();
             const quantity = parseInt(row.getAttribute('data-quantity'), 10);
 
             const matchesName = name.includes(search);
-            const matchesStock = !lowStock || quantity <= 10;
+
+            let matchesStock = true;
+
+            if(stockFilterValue ==='out_of_stock'){
+                matchesStock = quantity === 0;
+            }  else if (stockFilterValue === 'very_low') {
+                matchesStock = quantity < 10;
+            } else if (stockFilterValue === 'low') {
+                matchesStock = quantity >= 10 && quantity < 40;
+            } else if (stockFilterValue === 'medium') {
+                matchesStock = quantity >= 40 && quantity < 70;
+            } else if (stockFilterValue === 'high') {
+                matchesStock = quantity >= 70 && quantity < 100;
+            } else if (stockFilterValue === 'very_high') {
+                matchesStock = quantity >= 100;
+            }   
 
             row.style.display = matchesName && matchesStock ? '' : 'none';
         });

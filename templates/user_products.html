@@ -4,7 +4,7 @@
 {% block content %}
 <div class="container-fluid px-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 text-primary fw-bold">🎨 Product Dashboard</h1>
+        <h1 class="h3 text-primary fw-bold">📦 Product Dashboard</h1>
     </div>
 
     <div class="card shadow-lg border-0">
@@ -69,10 +69,21 @@
                             <td>{{ product.supplier_name }}</td>
                             <td>{{ product.store_name or 'Not assigned' }}</td>
                             <td class="fw-bold text-center">
-                                <span class="{% if product.quantity == 0 %}text-danger{% elif product.quantity <= 10 %}text-warning{% else %}text-success{% endif %}">
-                                    {{ product.quantity }}
-                                </span>
-                            </td>
+                                {% set qty = product.quantity %}
+                                {% if qty == 0 %}
+                                    <span class="text-danger">❌ {{ qty }} </span>
+                                {% elif qty < 10 %}
+                                    <span class="text-danger"> {{ qty }} </span>
+                                {% elif qty < 40 %}
+                                    <span class="text-warning"> {{ qty }} </span>
+                                {% elif qty < 70 %}
+                                    <span class="text-info"> {{ qty }} </span>
+                                {% elif qty < 100 %}
+                                    <span class="text-primary"> {{ qty }} </span>
+                                {% else %}
+                                    <span class="text-success"> {{ qty }} </span>
+                                {% endif %}
+                            </td>   
                             <td>{{ "%.2f"|format(product.price) }}</td>
                             <td class="text-center">
                                 <button class="btn btn-sm btn-primary edit-btn {% if user_role != 'manager' %}disabled{% endif %}" 

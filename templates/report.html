@@ -9,8 +9,8 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3 text-primary fw-bold">📊 Manager Report</h1>
         <div class="btn-group shadow-sm">
-            <button class="btn btn-primary" id="showProductsBtn"><i class="bi bi-box-seam"></i> Product List</button>
-            <button class="btn btn-outline-primary" id="showTransactionsBtn"><i class="bi bi-clock-history"></i> Product Transactions</button>
+            <button class="btn btn-primary" id="showProductsBtn"><i class=""></i>📦 Product List</button>
+            <button class="btn btn-outline-primary" id="showTransactionsBtn"><i class=""></i>🔄 Product Transactions</button>
         </div>
     </div>
 
@@ -19,19 +19,22 @@
         <div class="card-header bg-gradient-primary text-white fw-semibold d-flex justify-content-between align-items-center">
             <span><i class="bi bi-boxes me-2"></i>All Products</span>
             <div class="d-flex gap-2 w-50">
-                <input type="text" id="productSearch" class="form-control shadow-sm" placeholder="Search Product">
+                <input type="text" id="productSearch" class="form-control shadow-sm" placeholder="🔍 Search Product...">
                 <select id="categoriesFilter" class="form-select border-info">
                     <option value="">📦 All Categories</option>
                     {% for category in categories %}
                     <option value="{{ category.id }}">{{ category.categories_name }}</option>
                     {% endfor %}
                 </select>
-                <select id="lowStockFilter" class="form-select border-dark">
-                    <option value="">📦 All Stock Levels</option>
-                    <option value="low">🔻 Low Stock (≤ 10)</option>
-                    <option value="middle">⚠️ Middle Stock ( > 10 and < 100 )</option>
-                    <option value="high">📦 High Stock (> 100)</option>
-                </select>
+                <select id="lowStockFilter" class="form-select shadow-sm">
+                    <option value="">📊 All Stock Levels</option>
+                    <option value="out_of_stock" class="text-danger">Out of Stock</option>
+                    <option value="very_low" class="text-danger"> Very Low (< 10)</option>
+                    <option value="low" class="text-warning"> Low (10–39)</option>
+                    <option value="medium" class="text-info"> Medium (40–69)</option>
+                    <option value="high" class="text-primary"> High (70–99)</option>
+                    <option value="very_high" class="text-success"> Very High (≥ 100)</option>
+                </select>                             
                 <select id="stockFilter" class="form-select border-info">
                     <option value="">🌍 Select Store</option>
                     {% for store in stores %}
@@ -70,10 +73,21 @@
                             <td>{{ product.categories_name }}</td>
                             <td class="text-start">{{ product.product_name }}</td>
                             <td class="fw-bold text-center">
-                                <span class="{% if product.quantity == 0 %}text-danger{% elif product.quantity <= 10 %}text-warning{% else %}text-success{% endif %}">
-                                    {{ product.quantity }}
-                                </span>
-                            </td>
+                                {% set qty = product.quantity %}
+                                {% if qty == 0 %}
+                                    <span class="text-danger">❌ {{ qty }} </span>
+                                {% elif qty < 10 %}
+                                    <span class="text-danger"> {{ qty }} </span>
+                                {% elif qty < 40 %}
+                                    <span class="text-warning"> {{ qty }} </span>
+                                {% elif qty < 70 %}
+                                    <span class="text-info"> {{ qty }} </span>
+                                {% elif qty < 100 %}
+                                    <span class="text-primary"> {{ qty }} </span>
+                                {% else %}
+                                    <span class="text-success"> {{ qty }} </span>
+                                {% endif %}
+                            </td>            
                             <td>{{ product.price }}</td>
                         </tr>
                         {% endfor %}
@@ -88,11 +102,12 @@
         <div class="card-header bg-gradient-primary text-white fw-semibold d-flex justify-content-between align-items-center">
             <span><i class="bi bi-clock-history me-2"></i>Product Transactions</span>
             <div class="d-flex gap-2 w-50">
-                <input type="text" id="userFilter" class="form-control shadow-sm" placeholder="Search User">
+                <input type="text" id="productFilter" class="form-control shadow-sm" placeholder="🔍 Search Product...">
+                <input type="text" id="userFilter" class="form-control shadow-sm" placeholder="🔍 Search User....">
                 <select id="typeFilter" class="form-select shadow-sm">
-                    <option value="">All Types</option>
-                    <option value="in">In</option>
-                    <option value="out">Out</option>
+                    <option value="">🔄 All Transaction</option>
+                    <option value="in">  🟢 In</option>
+                    <option value="out"> 🔴 Out</option>
                 </select>
             </div>
         </div>

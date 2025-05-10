@@ -147,18 +147,21 @@ document.addEventListener('DOMContentLoaded', function() {
                     products.forEach(product => {
                         const quantity = product.quantity;
                         let quantityClass = '';
-                    
-                        if (quantity === 0 || quantity === null || quantity === undefined) {
-                            quantityClass = 'text-danger'; // red
-                        } else if (quantity <= 10) {
-                            quantityClass = 'text-warning'; // yellow
-                        } else if (quantity > 10 && quantity <= 50) {
-                            quantityClass = 'text-primary'; // blue (medium level)
-                        } else if (quantity > 50 && quantity <= 100) {
-                            quantityClass = 'text-info'; // light blue
-                        } else if (quantity > 100) {
-                            quantityClass = 'text-success'; // green
-                        }
+
+                    // Determine quantity class based on stock level
+                    if (quantity === 0 || quantity === null || quantity === undefined) {
+                        quantityClass = 'text-danger font-weight-bold'; // red (out of stock)
+                    } else if (quantity < 10) {
+                        quantityClass = 'text-danger font-weight-bold'; // red (very low)
+                    } else if (quantity >= 10 && quantity < 40) {
+                        quantityClass = 'text-warning font-weight-bold'; // yellow (low)
+                    } else if (quantity >= 40 && quantity < 70) {
+                        quantityClass = 'text-info font-weight-bold'; // blue (medium)
+                    } else if (quantity >= 70 && quantity < 100) {
+                        quantityClass = 'text-primary font-weight-bold'; // primary (high)
+                    } else {
+                        quantityClass = 'text-success font-weight-bold' ; // green (very high)
+                    }
                     
                         inventoryTableBody.innerHTML += `
                             <tr>

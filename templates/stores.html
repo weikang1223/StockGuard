@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container-fluid px-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 text-primary fw-bold">🏬 Stores Overview</h1>
+        <h1 class="h3 text-primary fw-bold">🏪 Stores Overview</h1>
     </div>
 
     <div class="card shadow-lg border-0">
@@ -16,7 +16,7 @@
                 <div class="d-flex flex-wrap gap-2">
                     <input type="text" id="searchInput" class="form-control border-primary" placeholder="🔍 Search Stores...">
                     <select id="locationFilter" class="form-select border-success">
-                        <option value="">🌍 All Locations</option>
+                        <option value="">📍 All Locations</option>
                         {% for location in locations %}
                         <option value="{{ location }}">{{ location }}</option>
                         {% endfor %}

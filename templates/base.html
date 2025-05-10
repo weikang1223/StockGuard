@@ -92,27 +92,27 @@
                 <div class="container-fluid d-flex justify-content-end">
                     <div class="dropdown">
                         <a href="#" class="d-flex align-items-center dropdown-toggle text-decoration-none" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-person-circle fs-4 me-2"></i>
-                            <span class="fw-semibold">{{ username }}</span>
+                            <i class="fs-4 me-2"></i>
+                            <span class="fw-semibold">👤 {{ username }}</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                             {% if session['role'] == 'manager' %}
                             <li>
                                 <a class="dropdown-item" href="{{ url_for('users') }}">
-                                    <i class="bi bi-person-gear me-2"></i> Manage Account
+                                    <i class="bi bi-person-gear me-2"></i>⚙️ Manage Account
                                 </a>
                             </li>
                             {% elif session['role'] == 'store admin' %}
                             <li>
                                 <a class="dropdown-item" href="{{ url_for('users_management') }}">
-                                    <i class="bi bi-person-gear me-2"></i> Manage Store Account
+                                    <i class="bi bi-person-gear me-2"></i> ⚙️ Manage Store Account
                                 </a>
                             </li>
                             {% endif %}
                             <li><hr class="dropdown-divider"></li>
                             <li>
                                 <a class="dropdown-item text-danger" href="{{ url_for('logout') }}">
-                                    <i class="bi bi-box-arrow-right me-2"></i> Logout
+                                    <i class="me-2"></i> 🚪 Logout
                                 </a>
                             </li>
                         </ul>

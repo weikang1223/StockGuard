@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', function () {
             productChart.update();
             
             // Update the selected store name dynamically (can be more general in a user dashboard context)
-            selectedStoreName.textContent = 'Your Top Products';
+            selectedStoreName.textContent = 'Top quantity product';
         } catch (error) {
             console.error('Error fetching top products for user:', error);
         }

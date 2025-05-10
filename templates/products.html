@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container-fluid px-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 text-primary fw-bold">🎨 Product Dashboard</h1>
+        <h1 class="h3 text-primary fw-bold">📦 Product Dashboard</h1>
     </div>
 
     <div class="card shadow-lg border-0">
@@ -79,7 +79,12 @@
                             <td>{{ product.supplier_name }}</td>
                             <td>{{ product.store_name or 'Not assigned' }}</td>
                             <td class="fw-bold text-center">
-                                <span class="{% if product.quantity == 0 %}text-danger{% elif product.quantity <= 10 %}text-warning{% else %}text-success{% endif %}">
+                                <span class="{% if product.quantity == 0 or product.quantity == null or product.quantity == undefined %}text-danger font-weight-bold
+                                    {% elif product.quantity < 10 %}text-danger font-weight-bold
+                                    {% elif product.quantity >= 10 and product.quantity < 40 %}text-warning font-weight-bold
+                                    {% elif product.quantity >= 40 and product.quantity < 70 %}text-info font-weight-bold
+                                    {% elif product.quantity >= 70 and product.quantity < 100 %}text-primary font-weight-bold
+                                    {% else %}text-success font-weight-bold{% endif %}">
                                     {{ product.quantity }}
                                 </span>
                             </td>
