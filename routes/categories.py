@@ -1,4 +1,4 @@
-from flask import render_template, jsonify, request,session, redirect,url_for
+from flask import render_template, jsonify, request,session, redirect,url_for,json,Response
 from database import database
 
 def init_category_routes(app):
@@ -74,7 +74,6 @@ def init_category_routes(app):
         try:
             conn = database.get_connection()
             cursor = conn.cursor(dictionary=True)
-            
             cursor.execute('DELETE FROM categories WHERE id = %s', (id,))
             
             if cursor.rowcount == 0:
@@ -85,6 +84,43 @@ def init_category_routes(app):
         except Exception as e:
             print(f"Error deleting category: {str(e)}")
             return jsonify({'success': False, 'message': str(e)}), 500
+        finally:
+            cursor.close()
+            conn.close()
+
+    @app.route('/categories/<int:id>', methods=['GET'])
+    def get_category_inventory(id):
+        if session.get('role') != 'manager':
+            return redirect(url_for('user_categories'))
+        try:
+            conn = database.get_connection()
+            cursor = conn.cursor(dictionary=True)
+
+            # The SQL query
+            cursor.execute('''
+                SELECT 
+                    s.store_name,
+                    p.product_name,
+                    p.quantity
+                FROM 
+                    products p
+                JOIN 
+                    stores s ON p.store_id = s.store_id
+                JOIN 
+                    categories c ON p.category_id = c.id
+                WHERE 
+                    c.id = %s
+            ''', (id,))
+
+            products = cursor.fetchall()
+
+
+            return Response(json.dumps(products), mimetype='application/json')
+
+        except Exception as e:
+            print(f"Error retrieving inventory for category {id}: {str(e)}")
+            return jsonify({'error': str(e)}), 500
+
         finally:
             cursor.close()
             conn.close()
