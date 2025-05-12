@@ -22,10 +22,12 @@
             </div>
             <div class="list-group list-group-flush">
                 <!-- Dashboard Links for Different Roles -->
+                 <!--Manager role dashbaord -->
                 {% if session.get('role') == 'manager' %}
                 <a href="{{ url_for('dashboard') }}" class="list-group-item list-group-item-action {% if request.endpoint == 'dashboard' %}active{% endif %}">
                     <i class="bi bi-speedometer2"></i> Dashboard
                 </a>
+                <!--Store admin role dashbaord-->
                 {% elif session.get('role') == 'store admin' %}
                 <a href="{{ url_for('user_dashboard') }}" class="list-group-item list-group-item-action {% if request.endpoint == 'user_dashboard' %}active{% endif %}">
                     <i class="bi bi-speedometer2"></i> Dashboard
