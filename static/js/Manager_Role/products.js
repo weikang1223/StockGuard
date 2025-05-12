@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert('Product updated successfully!');
                 window.location.reload();
             } else {
-                alert('Error: ' + (result.message || 'Failed to update product'));
+                alert('Error: ' + ('Failed to update product'));
             }
         } catch (error) {
             console.error('Error:', error);

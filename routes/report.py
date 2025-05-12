@@ -79,7 +79,7 @@ def init_report_routes(app):
        conn.close()
 
        # Rendering the report page with filtered products and transactions
-       return render_template('report.html', products=products, transactions=transactions, stores=stores, username=username,categories=categories)
+       return render_template('Manager_role/report.html', products=products, transactions=transactions, stores=stores, username=username,categories=categories)
    
 
    @app.route('/user_report')
@@ -107,5 +107,5 @@ def init_report_routes(app):
        cursor.close()
        conn.close()
 
-       return render_template('user_report.html', products=products, username=username)
+       return render_template('Admin_Role/user_report.html', products=products, username=username)
 

@@ -60,7 +60,7 @@ def init_product_routes(app):
             username = session.get('username')
             
             return render_template(
-                'products.html',
+                'Manager_role/products.html',
                 username= username,
                 products=products,
                 categories=categories,
@@ -292,7 +292,7 @@ def init_product_routes(app):
           
           transactions = cursor.fetchall()
           username = session.get('username')
-          return render_template('transactions.html', transactions=transactions, username=username)
+          return render_template('Manager_role/transactions.html', transactions=transactions, username=username)
       except Exception as e:
           print(f"Error fetching transactions: {e}")
           return jsonify({'error': str(e)}), 500
@@ -335,7 +335,7 @@ def init_product_routes(app):
             suppliers = cursor.fetchall()
 
             return render_template(
-                'user_products.html',  # You would create a template to display these products
+                'Admin_Role/user_products.html',  # You would create a template to display these products
                 username=username,
                 products=products,
                 categories = categories,

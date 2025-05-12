@@ -12,7 +12,7 @@ def init_category_routes(app):
             cursor.execute('SELECT id, categories_name FROM categories')
             categories = cursor.fetchall()
             username = session.get('username')
-            return render_template('categories.html', categories=categories, username=username)
+            return render_template('Manager_role/categories.html', categories=categories, username=username)
         finally:
             cursor.close()
             conn.close()
@@ -136,7 +136,7 @@ def init_category_routes(app):
             cursor.execute('SELECT id, categories_name FROM categories')
             categories = cursor.fetchall()
             username = session.get('username')
-            return render_template('user_categories.html', categories=categories, username=username)
+            return render_template('Admin_Role/user_categories.html', categories=categories, username=username)
         finally:
             cursor.close()
             conn.close()

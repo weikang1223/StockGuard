@@ -25,7 +25,7 @@ def init_dashboard_routes(app):
 
             username = session.get('username')
 
-            return render_template('dashboard.html',
+            return render_template('Manager_role/dashboard.html',
                                     username=username,
                                     stores=stores,
                                     total_products=total_products,
@@ -133,7 +133,7 @@ def init_dashboard_routes(app):
 
         username = session.get('username')
 
-        return render_template('user_dashboard.html',
+        return render_template('Admin_Role/user_dashboard.html',
                                store_name = store_name,
                                total_products=total_products,
                                total_value=total_value,

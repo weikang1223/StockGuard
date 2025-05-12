@@ -15,7 +15,7 @@ def init_supplier_routes(app):
             username = session.get('username')
             user_role = session.get('role')  # <-- Make sure you get user role from session
             print(user_role)
-            return render_template('suppliers.html', suppliers=suppliers, username=username, user_role=user_role)
+            return render_template('Manager_role/suppliers.html', suppliers=suppliers, username=username, user_role=user_role)
         finally:
             cursor.close()
             conn.close()
@@ -164,7 +164,7 @@ def init_supplier_routes(app):
             cursor.execute('SELECT id, company_name, contact_name, phone, email, address FROM suppliers')
             suppliers = cursor.fetchall()
             username = session.get('username')
-            return render_template('user_suppliers.html', suppliers=suppliers, username=username)
+            return render_template('Admin_Role/user_suppliers.html', suppliers=suppliers, username=username)
         finally:
             cursor.close()
             conn.close()

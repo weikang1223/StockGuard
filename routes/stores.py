@@ -26,7 +26,7 @@ def init_store_routes(app):
 
             username = session.get('username')
             
-            return render_template('stores.html', stores=stores, locations=locations, username=username)
+            return render_template('Manager_role/stores.html', stores=stores, locations=locations, username=username)
         except Exception as e:
             print(f"Error retrieving stores: {str(e)}")
             return jsonify({'success': False, 'message': str(e)}), 500
@@ -172,7 +172,7 @@ def init_store_routes(app):
 
             username = session.get('username')
             
-            return render_template('user_stores.html', stores=stores, locations=locations, username=username)
+            return render_template('Admin_Role/user_stores.html', stores=stores, locations=locations, username=username)
         except Exception as e:
             print(f"Error retrieving stores: {str(e)}")
             return jsonify({'success': False, 'message': str(e)}), 500
