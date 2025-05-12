@@ -13,10 +13,12 @@ def init_store_routes(app):
             # Retrieve all stores along with their product counts
             cursor.execute('''
                 SELECT s.store_id, s.store_name, s.location, 
-                       COUNT(DISTINCT p.product_id) AS product_count 
+                       COUNT(DISTINCT p.product_id) AS product_count
+                        ,u.username
                 FROM stores s 
                 LEFT JOIN products p ON s.store_id = p.store_id 
-                GROUP BY s.store_id, s.store_name, s.location
+                LEFT JOIN users u ON s.store_id = u.store_id
+                GROUP BY s.store_id, s.store_name, s.location,u.username
             ''')
             stores = cursor.fetchall()
             
