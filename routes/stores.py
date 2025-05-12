@@ -106,13 +106,18 @@ def init_store_routes(app):
 
             cursor.execute('''
                 SELECT 
-                    p.product_name,
-                    p.quantity,
-                    c.categories_name,
-                    p.price     
-                FROM products p
-                LEFT JOIN categories c ON p.category_id = c.id
-                WHERE p.store_id = %s
+                p.product_name,
+                p.quantity,
+                c.categories_name,
+                p.price,
+                s.company_name AS supplier_name,
+                s.contact_name AS supplier_contact_person,
+                s.phone AS supplier_phone,
+                s.email AS supplier_email     
+            FROM products p
+            LEFT JOIN categories c ON p.category_id = c.id
+            LEFT JOIN suppliers s ON p.supplier_id = s.id
+            WHERE p.store_id = %s
             ''', (store_id,))  # Fixed tuple here
 
             products = cursor.fetchall()

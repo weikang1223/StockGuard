@@ -24,7 +24,7 @@ document.getElementById("loginForm").addEventListener("submit", async function (
         document.getElementById("password").value = "";  // Clear password
     }
 });
-
+// toggle password 
 document.getElementById("togglePassword").addEventListener("click", function () {
     const passwordField = document.getElementById("password");
     const icon = this.querySelector("i");

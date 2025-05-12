@@ -33,51 +33,62 @@
                     <i class="bi bi-speedometer2"></i> Dashboard
                 </a>
                 {% endif %}
+                <!--Manager role suppliers -->
                 {% if session.get('role') == 'manager' %}
                 <a href="{{ url_for('suppliers') }}" class="list-group-item list-group-item-action {% if request.endpoint == 'suppliers' %}active{% endif %}">
                     <i class="bi bi-truck"></i> Suppliers
                 </a>
+                <!--Store admin role suppliers-->
                 {% elif session.get('role') == 'store admin' %}
                 <a href="{{ url_for('user_suppliers') }}" class="list-group-item list-group-item-action {% if request.endpoint == 'user_suppliers' %}active{% endif %}">
                     <i class="bi bi-speedometer2"></i> Suppliers
                 </a>
                 {% endif %}
+                <!--Manager role categories -->
                 {% if session.get('role') == 'manager' %}
                 <a href="{{ url_for('categories') }}" class="list-group-item list-group-item-action {% if request.endpoint == 'categories' %}active{% endif %}">
                     <i class="bi bi-list"></i> Categories
                 </a>
+                <!--Store admin role cateogories-->
                 {% elif session.get('role') == 'store admin' %}
                 <a href="{{ url_for('user_categories') }}" class="list-group-item list-group-item-action {% if request.endpoint == 'user_categories' %}active{% endif %}">
                     <i class="bi bi-speedometer2"></i> Categories
                 </a>
                 {% endif %}
+                <!--Manager role stores -->
                 {% if session.get('role') == 'manager' %}
                 <a href="{{ url_for('stores') }}" class="list-group-item list-group-item-action {% if request.endpoint == 'stores' %}active{% endif %}">
                     <i class="bi bi-shop"></i> Stores
                 </a>
+                <!--Store admin role stores-->
                 {% elif session.get('role') == 'store admin' %}
                 <a href="{{ url_for('user_stores') }}" class="list-group-item list-group-item-action {% if request.endpoint == 'user_stores' %}active{% endif %}">
                     <i class="bi bi-shop"></i> Stores
                 </a>
                 {% endif %}
+                <!--Manager role product -->
                 {% if session.get('role') == 'manager' %}
                 <a href="{{ url_for('products') }}" class="list-group-item list-group-item-action {% if request.endpoint == 'products' %}active{% endif %}">
                     <i class="bi bi-box"></i> Products
                 </a>
+                <!--Store admin role product-->
                 {% elif session.get('role') == 'store admin' %}
                 <a href="{{ url_for('user_products') }}" class="list-group-item list-group-item-action {% if request.endpoint == 'user_products' %}active{% endif %}">
                     <i class="bi bi-box"></i> Products
                 </a>
                 {% endif %}
+                <!--Manager role produc transactions -->
                 {% if session.get('role') == 'manager' %}
                     <a href="{{ url_for('get_transactions') }}" class="list-group-item list-group-item-action {% if request.endpoint == 'get_transactions' %}active{% endif %}">
                         <i class="bi bi-arrow-left-right"></i> Product Transactions
                     </a>
                 {% endif %}
+                <!--Manager role report -->
                 {% if session.get('role') == 'manager' %}
                 <a href="{{ url_for('report') }}" class="list-group-item list-group-item-action {% if request.endpoint == 'manager_report' %}active{% endif %}">
                     <i class="bi bi-file-earmark-bar-graph"></i> Reports
                 </a>
+                <!--Store admin role report-->
                 {% elif session.get('role') == 'store admin' %}
                 <a href="{{ url_for('user_report') }}" class="list-group-item list-group-item-action {% if request.endpoint == 'user_report' %}active{% endif %}">
                     <i class="bi bi-file-earmark-bar-graph"></i> Report
@@ -98,12 +109,14 @@
                             <span class="fw-semibold">👤 {{ username }}</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <!--Manager role user management -->
                             {% if session['role'] == 'manager' %}
                             <li>
                                 <a class="dropdown-item" href="{{ url_for('users') }}">
                                     <i class="bi bi-person-gear me-2"></i>⚙️ Manage Account
                                 </a>
                             </li>
+                            <!--Store admin role user management-->
                             {% elif session['role'] == 'store admin' %}
                             <li>
                                 <a class="dropdown-item" href="{{ url_for('users_management') }}">
@@ -111,6 +124,7 @@
                                 </a>
                             </li>
                             {% endif %}
+                            <!--logout -->
                             <li><hr class="dropdown-divider"></li>
                             <li>
                                 <a class="dropdown-item text-danger" href="{{ url_for('logout') }}">

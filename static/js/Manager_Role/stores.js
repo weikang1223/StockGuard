@@ -156,7 +156,26 @@ viewInventoryButtons.forEach((button) => {
                             <td>$${product.price ? product.price.toFixed(2) : 'N/A'}</td>
                         </tr>
                     `;
-                });
+                }); 
+                // low stock alert modal 
+                 const lowStockProducts = products.filter(p => p.quantity <= LOW_STOCK_THRESHOLD);
+                if (lowStockProducts.length > 0) {
+                    let lowStockMessage = '';
+                    lowStockProducts.forEach(product => {
+                        lowStockMessage += `
+                            <div class="mb-2">
+                                <strong>${product.product_name}</strong> (${product.quantity} remaining)<br>
+                                Supplier: ${product.supplier_name}<br>
+                                Contact: ${product.supplier_contact_person}<br>
+                                Phone: ${product.supplier_phone}<br>
+                                Email: ${product.supplier_email}
+                            </div>
+                        `;
+                    });
+
+                    document.getElementById('lowStockToastBody').innerHTML = lowStockMessage;
+                    lowStockToast.show();
+                }
             } else {
                 inventoryTableBody.innerHTML = `
                     <tr>
