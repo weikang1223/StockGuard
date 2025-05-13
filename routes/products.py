@@ -1,10 +1,12 @@
-from flask import render_template, jsonify, request,session
+from flask import render_template, jsonify, request,session,redirect,url_for
 from database import database
 from datetime import datetime
 
 def init_product_routes(app):
     @app.route('/products')
     def products():
+        if session.get('role') != 'manager':
+            return redirect(url_for('user_products'))
         try:
             conn = database.get_connection()
             cursor = conn.cursor(dictionary=True)
@@ -77,6 +79,8 @@ def init_product_routes(app):
 
     @app.route('/products', methods=['POST'])
     def add_product():
+        if session.get('role') != 'manager':
+            return redirect(url_for('user_products'))
         try:
             data = request.get_json()
             print(f"Received data: {data}")  # Debug: Log received data
@@ -133,6 +137,8 @@ def init_product_routes(app):
 
     @app.route('/products/<int:id>', methods=['PUT'])
     def update_product(id):
+        if session.get('role') != 'manager':
+            return redirect(url_for('user_products'))
         try:
             data = request.get_json()
             conn = database.get_connection()
@@ -206,6 +212,8 @@ def init_product_routes(app):
 
     @app.route('/products/<int:id>', methods=['DELETE'])
     def delete_product(id):
+        if session.get('role') != 'manager':
+            return redirect(url_for('user_products'))
         try:
             conn = database.get_connection()
             cursor = conn.cursor(dictionary=True)
@@ -226,6 +234,8 @@ def init_product_routes(app):
             
     @app.route('/products/stock-out', methods=['POST'])
     def stock_out():
+       if session.get('role') != 'manager':
+            return redirect(url_for('user_products'))
        try:
            data = request.get_json()
            product_id = data.get('product_id')
@@ -271,6 +281,8 @@ def init_product_routes(app):
             
     @app.route('/products/transactions')
     def get_transactions():
+      if session.get('role') != 'manager':
+            return redirect(url_for('user_products'))
       try:
           conn = database.get_connection()
           cursor = conn.cursor(dictionary=True)
@@ -302,6 +314,8 @@ def init_product_routes(app):
 
     @app.route('/user_products')
     def user_products():
+        if session.get('role') != 'store admin':
+            return redirect(url_for('products'))
         try:
             # Retrieve the store_id associated with the logged-in user
             store_id = session.get('store_id')
@@ -352,6 +366,8 @@ def init_product_routes(app):
 
     @app.route('/user_products', methods=['POST'])
     def add_user_product():
+        if session.get('role') != 'store admin':
+            return redirect(url_for('products'))
         try:
             # Ensure the user is associated with a store
             store_id = session.get('store_id')
@@ -414,6 +430,8 @@ def init_product_routes(app):
 
     @app.route('/user_products/stock-out', methods=['POST'])
     def user_stock_out():
+        if session.get('role') != 'store admin':
+            return redirect(url_for('products'))
         try:
             store_id = session.get('store_id')
             if not store_id:

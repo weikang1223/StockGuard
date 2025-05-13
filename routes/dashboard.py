@@ -38,7 +38,7 @@ def init_dashboard_routes(app):
     @app.route('/dashboard/low-stock')
     def get_low_stock_items():
         if session.get('role') != 'manager':
-            return jsonify({"error": "Unauthorized"}), 403
+            return redirect(url_for('user_dashboard'))
 
         try:
             conn = database.get_connection()
@@ -58,7 +58,7 @@ def init_dashboard_routes(app):
     @app.route('/dashboard/top-products/')
     def get_top_products():
         if session.get('role') != 'manager':
-            return jsonify({"error": "Unauthorized"}), 403
+            return redirect(url_for('user_dashboard'))
 
         store_id = request.args.get('store_id')
 
@@ -81,7 +81,7 @@ def init_dashboard_routes(app):
     @app.route('/dashboard/low-stock-chart')
     def low_stock_chart():
         if session.get('role') != 'manager':
-            return jsonify({"error": "Unauthorized"}), 403
+            return redirect(url_for('user_dashboard'))
 
         try:
             conn = database.get_connection()
@@ -144,7 +144,7 @@ def init_dashboard_routes(app):
     @app.route('/user_dashboard/top-products-user')
     def get_user_top_products():
         if session.get('role') != 'store admin':
-            return jsonify({"error": "Unauthorized"}), 403
+            return redirect(url_for('dashboard'))
 
         store_id = session.get('store_id')
         try:
@@ -165,7 +165,7 @@ def init_dashboard_routes(app):
     @app.route('/user_dashboard/low-stock')
     def get_user_dashboard_low_stock_items():
         if session.get('role') != 'store admin':
-            return jsonify({"error": "Unauthorized"}), 403
+            return redirect(url_for('dashboard'))
 
         store_id = session.get('store_id')
         try:
@@ -192,7 +192,7 @@ def init_dashboard_routes(app):
     @app.route('/user_dashboard/low-stock-chart')
     def get_user_low_stock_chart():
         if session.get('role') != 'store admin':
-            return jsonify({"error": "Unauthorized"}), 403
+            return redirect(url_for('dashboard'))
 
         store_id = session.get('store_id')
         try:

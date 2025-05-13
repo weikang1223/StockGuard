@@ -24,6 +24,7 @@
                         <tr>
                             <th>ID</th>
                             <th>Category Name</th>
+                            <th>Product Count </th>
                             <th style="width: 150px;">Actions</th>
                         </tr>
                     </thead>
@@ -32,6 +33,7 @@
                         <tr>
                             <td>{{ category.id }}</td>
                             <td>{{ category.categories_name }}</td>
+                             <td class="text-center fw-bold">{{ category.product_count }}</td>
                             <td class="text-center">
                                 <button class="btn btn-sm btn-primary edit-btn {% if user_role != 'manager' %}disabled{% endif %}" 
                                         {% if user_role != 'manager' %}disabled{% endif %}

@@ -9,7 +9,15 @@ def init_category_routes(app):
         try:
             conn = database.get_connection()
             cursor = conn.cursor(dictionary=True)
-            cursor.execute('SELECT id, categories_name FROM categories')
+            cursor.execute('''
+                SELECT 
+                c.id, 
+                c.categories_name, 
+                COUNT(DISTINCT p.product_id) AS product_count
+                FROM categories c
+                LEFT JOIN products p ON c.id = p.category_id
+                GROUP BY c.id, c.categories_name
+                ''')
             categories = cursor.fetchall()
             username = session.get('username')
             return render_template('Manager_role/categories.html', categories=categories, username=username)
@@ -102,14 +110,10 @@ def init_category_routes(app):
                     s.store_name,
                     p.product_name,
                     p.quantity
-                FROM 
-                    products p
-                JOIN 
-                    stores s ON p.store_id = s.store_id
-                JOIN 
-                    categories c ON p.category_id = c.id
-                WHERE 
-                    c.id = %s
+                FROM  products p
+                JOIN  stores s ON p.store_id = s.store_id
+                JOIN categories c ON p.category_id = c.id
+                WHERE  c.id = %s
             ''', (id,))
 
             products = cursor.fetchall()
@@ -133,7 +137,21 @@ def init_category_routes(app):
         try:
             conn = database.get_connection()
             cursor = conn.cursor(dictionary=True)
-            cursor.execute('SELECT id, categories_name FROM categories')
+            store_id = session.get('store_id')
+           # print(f"Store ID from session: {store_id}")
+
+            if not store_id:
+                return jsonify({'error': 'Store not associated with user'}), 400
+            cursor.execute('''
+                SELECT 
+                c.id, 
+                c.categories_name, 
+                COUNT(DISTINCT p.product_id) AS product_count
+                FROM categories c
+                LEFT JOIN products p ON c.id = p.category_id
+                AND p.store_id= %s
+                GROUP BY c.id, c.categories_name
+                ''', (store_id,))
             categories = cursor.fetchall()
             username = session.get('username')
             return render_template('Admin_Role/user_categories.html', categories=categories, username=username)

@@ -25,9 +25,9 @@ def init_login_routes(app):
             session["username"] = user["username"]
             session["role"] = user["role"]
             session["store_id"] = user["store_id"]  # Add this if you're using store-specific dashboards
-            print(f"User {username} logged in with store_id: {session['store_id']}")
+          #  print(f"User {username} logged in with store_id: {session['store_id']}")
 
-            print(check_password_hash(user["password"], password))
+          #  print(check_password_hash(user["password"], password))
             # Return role-specific redirect URL
             if user["role"] == "manager":
                 redirect_url = url_for('dashboard')

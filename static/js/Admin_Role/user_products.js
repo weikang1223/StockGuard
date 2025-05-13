@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 alert('Product added successfully!');
                 window.location.reload(); // Refresh the page to show the new product
             } else {
-                alert('Error: ' + (result.message || 'Failed to add product'));
+                alert('Error: ' + ('Failed to add product'));
             }
         } catch (error) {
             console.error('Error:', error);
@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 stockOutModal.hide(); // Close the modal
                 window.location.reload(); // Refresh the page to reflect changes
             } else {
-                alert('Error: ' + (result.message || 'Failed to process stock-out'));
+                alert('Error: ' + ('Failed to process stock-out'));
             }
         } catch (error) {
             console.error('Error:', error);

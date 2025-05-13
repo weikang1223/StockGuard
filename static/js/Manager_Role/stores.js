@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert('Store added successfully!');
                 window.location.reload();
             } else {
-                alert('Error: ' + (result.message || 'Failed to add store'));
+                alert('Error: ' + ('Failed to add store'));
             }
         } catch (error) {
             console.error('Error:', error);
@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert('Store updated successfully!'); 
                 window.location.reload();
             } else {
-                alert('Error: ' + (result.message || 'Failed to update store')); // Updated alert message
+                alert('Error: ' + ('Failed to update store')); // Updated alert message
             }
         } catch (error) {
             console.error('Error:', error);
@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     alert('Store deleted successfully!');
                     window.location.reload();
                 } else {
-                    alert('Error: ' + (result.message || 'Failed to delete store'));
+                    alert('Error: ' + 'Failed to delete store');
                 }
             } catch (error) {
                 console.error('Error:', error);

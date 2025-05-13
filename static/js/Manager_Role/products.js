@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert('Product added successfully!');
                 window.location.reload();
             } else {
-                alert('Error: ' + (result.message || 'Failed to add product'));
+                alert('Error: ' + ('Failed to add product'));
             }
         } catch (error) {
             console.error('Error:', error);
@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     alert('Product deleted successfully!');
                     window.location.reload();
                 } else {
-                    alert('Error: ' + (result.message || 'Failed to delete product'));
+                    alert('Error: ' + ('Failed to delete product'));
                 }
             } catch (error) {
                 console.error('Error:', error);
@@ -269,7 +269,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert('Stock out recorded successfully!');
                 window.location.reload();
             } else {
-                alert('Error: ' + (result.message || 'Failed to record stock out'));
+                alert('Error: ' + ('Failed to record stock out'));
             }
         } catch (error) {
             console.error('Error:', error);

@@ -8,6 +8,8 @@ def init_report_routes(app):
     # Manager report route
    @app.route('/report')
    def report():
+       if session.get('role') != 'manager':
+            return redirect(url_for('user_report'))
        conn = database.get_connection()
        cursor = conn.cursor(dictionary=True)
 
@@ -84,6 +86,8 @@ def init_report_routes(app):
 
    @app.route('/user_report')
    def user_report():
+       if session.get('role') != 'store admin':
+            return redirect(url_for('report'))
        conn = database.get_connection()
        cursor = conn.cursor(dictionary=True)
 

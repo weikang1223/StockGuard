@@ -8,6 +8,9 @@ app = Flask(__name__)
 def init_user_routes(app):
     @app.route('/users')
     def users():
+        if session.get('role') != 'manager':
+            return redirect(url_for('users_management'))
+        
         user_id = session.get('user_id')
         try:
             conn = database.get_connection()
@@ -38,6 +41,8 @@ def init_user_routes(app):
 
     @app.route('/users', methods=['POST'])
     def add_user():
+        if session.get('role') != 'manager':
+            return redirect(url_for('users_management'))
         try:
             data = request.get_json()
             conn = database.get_connection()
@@ -67,6 +72,8 @@ def init_user_routes(app):
 
     @app.route('/users/<int:id>', methods=['PUT'])
     def update_user(id):
+        if session.get('role') != 'manager':
+            return redirect(url_for('users_management'))
         try:
             data = request.get_json()
             conn = database.get_connection()
@@ -133,6 +140,8 @@ def init_user_routes(app):
 
     @app.route('/users/<int:id>', methods=['DELETE'])
     def delete_user(id):
+        if session.get('role') != 'manager':
+            return redirect(url_for('users_management'))
         try:
             conn = database.get_connection()
             cursor = conn.cursor(dictionary=True)

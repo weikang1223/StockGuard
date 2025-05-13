@@ -6,6 +6,8 @@ from decimal import Decimal
 def init_store_routes(app):
     @app.route('/stores')
     def stores():
+        if session.get('role') != 'manager':
+            return redirect(url_for('user_stores'))
         try:
             conn = database.get_connection()
             cursor = conn.cursor(dictionary=True)
@@ -38,6 +40,8 @@ def init_store_routes(app):
 
     @app.route('/stores', methods=['POST'])
     def add_store():
+        if session.get('role') != 'manager':
+            return redirect(url_for('user_stores'))
         try:
             data = request.get_json()
             conn = database.get_connection()
@@ -57,6 +61,8 @@ def init_store_routes(app):
 
     @app.route('/stores/<int:id>', methods=['PUT'])
     def update_store(id):
+        if session.get('role') != 'manager':
+            return redirect(url_for('user_stores'))
         try:
             data = request.get_json()
             conn = database.get_connection()
@@ -83,6 +89,8 @@ def init_store_routes(app):
 
     @app.route('/stores/<int:id>', methods=['DELETE'])
     def delete_store(id):
+        if session.get('role') != 'manager':
+            return redirect(url_for('user_stores'))
         try:
             conn = database.get_connection()
             cursor = conn.cursor(dictionary=True)
@@ -102,6 +110,8 @@ def init_store_routes(app):
 
     @app.route('/stores/<int:store_id>/products')
     def get_store_products(store_id):
+        if session.get('role') != 'manager':
+            return redirect(url_for('user_stores'))
         try:
             conn = database.get_connection()
             cursor = conn.cursor(dictionary=True)
@@ -147,7 +157,7 @@ def init_store_routes(app):
         
         try:
             store_id = session.get('store_id')
-            print(f"Store ID from session: {store_id}")
+           # print(f"Store ID from session: {store_id}")
 
             if not store_id:
                 return jsonify({'error': 'Store not associated with user'}), 400
@@ -187,6 +197,8 @@ def init_store_routes(app):
 
     @app.route('/user_stores/<int:store_id>/products')
     def get_store_user_products(store_id):
+        if session.get('role') != 'store admin':
+            return redirect(url_for('stores'))
         try:
             store_id = session.get('store_id')
             print(f"Store ID from session: {store_id}")
