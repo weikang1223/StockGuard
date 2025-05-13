@@ -124,14 +124,10 @@ def init_supplier_routes(app):
                     p.product_name,
                     p.quantity,
                     p.price
-                FROM 
-                    products p
-                JOIN 
-                    stores s ON p.store_id = s.store_id
-                JOIN 
-                    suppliers sp ON p.supplier_id = sp.id
-                WHERE 
-                    sp.id = %s
+                FROM products p
+                JOIN  stores s ON p.store_id = s.store_id
+                JOIN suppliers sp ON p.supplier_id = sp.id
+                WHERE sp.id = %s
             ''', (id,))
 
             products = cursor.fetchall()
