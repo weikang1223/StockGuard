@@ -1,16 +1,22 @@
 # test_connection.py
 # testing the database connection from mysql
+# for testing purpose
+
 import mysql.connector
 from mysql.connector import Error
+import os
+from dotenv import load_dotenv
 
+env_path = "C:/Users/leewe/Project/database/.env"
+load_dotenv(env_path)
 
 def test_connection():
     try:
         connection = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password="Wk123456",  # Replace with your password
-            database="StockGuard"
+            host=os.getenv('DATABASE_HOST'),
+            user=os.getenv('DATABASE_USERNAME'),
+            password=os.getenv('DATABASE_PASSWORD'),
+            database=os.getenv('DATABASE')
         )
 
         if connection.is_connected():
