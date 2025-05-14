@@ -69,9 +69,9 @@
                             data-store-id="{{ product.store_id }}"
                             data-category-id="{{ product.category_id}}">
                             <td>{{ product.product_id }}</td>
-                            <td>{{ product.store_name }}</td>
-                            <td>{{ product.categories_name }}</td>
-                            <td class="text-start">{{ product.product_name }}</td>
+                            <td>{{ product.store_name | title}}</td>
+                            <td>{{ product.categories_name | title}}</td>
+                            <td class="text-start">{{ product.product_name | title}}</td>
                             <td class="fw-bold text-center">
                                 {% set qty = product.quantity %}
                                 {% if qty == 0 %}

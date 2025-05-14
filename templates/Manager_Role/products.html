@@ -74,10 +74,10 @@
                         {% for product in products %}
                         <tr data-store-id="{{ product.store_id }}" data-category-id="{{ product.category_id }}" data-supplier-id="{{ product.supplier_id }}">
                             <td>{{ product.product_id }}</td>
-                            <td>{{ product.product_name }}</td>
-                            <td>{{ product.category_name }}</td>
-                            <td>{{ product.supplier_name }}</td>
-                            <td>{{ product.store_name or 'Not assigned' }}</td>
+                            <td>{{ product.product_name | title}}</td>
+                            <td>{{ product.category_name| title }}</td>
+                            <td>{{ product.supplier_name| title }}</td>
+                            <td>{{ product.store_name or 'Not assigned' | title}}</td>
                             <td class="fw-bold text-center">
                                 <span class="{% if product.quantity == 0 or product.quantity == null or product.quantity == undefined %}text-danger font-weight-bold
                                     {% elif product.quantity < 10 %}text-danger font-weight-bold

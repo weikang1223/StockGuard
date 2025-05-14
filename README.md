@@ -2,7 +2,7 @@
 
 Stock Guard is a lightweight inventory maangemnt system build using Flask and MySQL
 
-## features:
+## Features:
 - Role-based login for manager and store admin
 - Supplier management 🚚
 - Category management 🏷️
@@ -24,15 +24,16 @@ Stock Guard is a lightweight inventory maangemnt system build using Flask and My
 ### Getting Started
 
 - MySQL workbench
-- python 
-- pip 
+- Python 
+- Pip 
 
 
 ### pip install item 
-- python-dotenv
-- render template
-- flask
-- mysql-connector-python
+- Python-dotenv
+- Render template
+- Flask
+- Mysql-connector-python
+- Werkzeug.security
 
 
 #### Installationn
@@ -49,12 +50,13 @@ Stock Guard is a lightweight inventory maangemnt system build using Flask and My
 
 ##### Trobleshooting 
 -  Cant connect to MySQL?
- - ensure XAMPP MySQL service is running,
- - Check on database credential in .env and run the test_database.py
+- Ensure XAMPP MySQL service is running,
+- Check on database credential in .env and run the test_database.py
  Result show
  ![alt text](image.png)
 
 - Flask Not found ?
- - make suru install via pip install flask 
+- Make suru install via pip install flask 
+
 ###### License
 - This project is part of CE301 individual final-year proejct and is intended for academic and eductional use.

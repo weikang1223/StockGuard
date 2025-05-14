@@ -32,9 +32,9 @@
                         {% for user in users %}
                         <tr>
                             <td>{{ user.id }}</td>
-                            <td>{{ user.username }}</td>
+                            <td>{{ user.username | title}}</td>
                             <td>{{ user.role | title }}</td>
-                            <td>{{ user.store_name or 'None' }}</td>               
+                            <td>{{ user.store_name or 'None'| title }}</td>               
                             <td class="text-center">
                                 <button class="btn btn-sm btn-outline-primary edit-btn" 
                                         data-id="{{ user.id }}"

@@ -32,7 +32,7 @@
                         {% for category in categories %}
                         <tr>
                             <td>{{ category.id }}</td>
-                            <td>{{ category.categories_name }}</td>
+                            <td>{{ category.categories_name| title }}</td>
                              <td class="text-center fw-bold">{{ category.product_count }}</td>
                             <td class="text-center">
                                 <button class="btn btn-sm btn-primary edit-btn {% if user_role != 'manager' %}disabled{% endif %}" 
