@@ -5,7 +5,8 @@ from mysql.connector import Error
 from werkzeug.security import generate_password_hash
 
 # Load environment variables
-env_path = "C:/Users/leewe/Project/database/.env"
+# example on this C:\Users\leewe\Desktop\StockGuard-1\database\.env
+env_path = "C:/Users/leewe/Project/database/.env" # copy .env file path and paste here 
 load_dotenv(env_path)
 
 def get_connection():

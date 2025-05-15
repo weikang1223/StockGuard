@@ -1,7 +1,4 @@
 from flask import Flask, render_template, session, redirect, url_for, jsonify, request, send_file
-import pandas as pd
-from io import BytesIO
-from fpdf import FPDF
 from database import database
 
 def init_report_routes(app):

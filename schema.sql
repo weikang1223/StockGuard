@@ -186,24 +186,3 @@ VALUES
 
 -- show all the tables
 show tables;
-
-select * from categories;
-select * from suppliers;
-select * from products;
-select * from stores;
-select * from product_transactions;
-select * from users;
-
-
-drop table product_transactions;
-drop table products;
-drop table users;
-drop table stores;
-drop table categories;
-drop table suppliers;
-
-DESCRIBE suppliers;
-DESCRIBE CATEGORIES;
-DESCRIBE SUPPLIERS;
-DESCRIBE stores;
-DESCRIBE USERS;
